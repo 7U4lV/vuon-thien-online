@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vườn Thiền Online</title>
+<meta name="description" content="Ứng dụng thiền đa người dùng với avatar hoạt hình, chat và voice">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧘</text></svg>">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font:12px Arial,sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);height:100vh;overflow:hidden}
+.login-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;z-index:1000}
+.login-card{background:rgba(255,255,255,.95);padding:40px;border-radius:20px;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,.2);max-width:400px;width:90%}
+.login-title{font-size:24px;color:#667eea;margin-bottom:10px;font-weight:bold}
+.login-subtitle{color:#666;margin-bottom:30px;font-size:14px}
+.login-btn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:12px 20px;margin:10px 0;border:none;border-radius:25px;font-size:14px;font-weight:bold;cursor:pointer;transition:all .3s;text-decoration:none}
+.login-btn.google{background:#fff;color:#333;border:2px solid #ddd}
+.login-btn.google:hover{background:#f8f9fa;transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.login-btn.facebook{background:#1877f2;color:white}
+.login-btn.facebook:hover{background:#166fe5;transform:translateY(-2px);box-shadow:0 4px 12px rgba(24,119,242,.3)}
+.login-btn.guest{background:#6c757d;color:white;margin-top:20px}
+.login-btn.guest:hover{background:#5a6268}
+.app{display:flex;height:100vh}
+.garden{flex:1;position:relative;background:linear-gradient(to bottom,#87CEEB 0%,#98FB98 20%,#90EE90 40%,#32CD32 60%,#228B22 80%,#006400 100%);overflow:hidden}
+.avatar{position:absolute;width:60px;height:60px;cursor:pointer;transition:all .3s;z-index:10;border-radius:50%;overflow:hidden;border:3px solid #fff;box-shadow:0 4px 8px rgba(0,0,0,.2)}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.avatar.standing{transform:translateY(0)}
+.avatar.sitting{transform:translateY(10px)}
+.avatar.walking{animation:walk .8s infinite}
+@keyframes walk{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.avatar.meditating{animation:glow 2s ease-in-out infinite alternate}
+@keyframes glow{0%{filter:brightness(.9)}100%{filter:brightness(1.3) drop-shadow(0 0 12px gold)}}
+.avatar.raising-hand::after{content:'✋';position:absolute;top:-30px;left:50%;transform:translateX(-50%);font-size:24px;animation:wave .5s infinite alternate}
+@keyframes wave{0%{transform:translateX(-50%) rotate(-10deg)}100%{transform:translateX(-50%) rotate(10deg)}}
+.avatar.speaking{border-color:#28a745;animation:speak-pulse 1s infinite}
+@keyframes speak-pulse{0%,100%{border-color:#28a745;box-shadow:0 4px 8px rgba(0,0,0,.2)}50%{border-color:#20c997;box-shadow:0 4px 16px rgba(40,167,69,.5)}}
+.avatar.muted{opacity:.5;filter:grayscale(50%)}
+.name{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.95);padding:4px 8px;border-radius:12px;font-size:10px;font-weight:bold;white-space:nowrap;box-shadow:0 2px 4px rgba(0,0,0,.1)}
+.name.host{background:#FFD700;color:#000}
+.status-icon{position:absolute;top:-8px;right:-8px;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;background:#fff;border:2px solid #fff;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+.sidebar{width:320px;background:rgba(255,255,255,.96);display:flex;flex-direction:column;border-left:1px solid rgba(255,255,255,.3)}
+.user-profile{padding:20px;border-bottom:1px solid #eee;text-align:center;background:linear-gradient(135deg,#f8f9fa,#e9ecef)}
+.profile-avatar{width:80px;height:80px;border-radius:50%;margin:0 auto 15px;overflow:hidden;border:4px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.profile-avatar img{width:100%;height:100%;object-fit:cover}
+.profile-name{font-size:16px;font-weight:bold;color:#333;margin-bottom:5px}
+.profile-email{font-size:11px;color:#666;margin-bottom:10px}
+.logout-btn{padding:6px 12px;background:#dc3545;color:white;border:none;border-radius:15px;font-size:10px;cursor:pointer}
+.controls{padding:15px;border-bottom:1px solid #eee}
+.btn-group{display:flex;gap:6px;margin:8px 0}
+.btn{padding:8px 12px;border:none;border-radius:15px;cursor:pointer;font-size:11px;font-weight:bold;transition:all .3s;flex:1;text-align:center}
+.btn-primary{background:#667eea;color:white}
+.btn-primary:hover{background:#5a6fd8;transform:translateY(-1px)}
+.btn.active{background:#28a745}
+.btn-warning{background:#ffc107;color:#000}
+.btn-danger{background:#dc3545;color:white}
+.btn:disabled{background:#ccc;cursor:not-allowed;transform:none}
+.chat{flex:1;display:flex;flex-direction:column}
+.messages{flex:1;padding:10px;overflow-y:auto;max-height:200px;background:#f8f9fa}
+.message{margin:6px 0;padding:8px 12px;border-radius:15px;max-width:90%;word-wrap:break-word;font-size:11px;display:flex;align-items:flex-start;gap:8px}
+.message.own{background:#667eea;color:white;margin-left:auto;flex-direction:row-reverse}
+.message.other{background:white;border:1px solid #ddd}
+.message.system{background:#e9ecef;color:#495057;font-style:italic;text-align:center;margin:4px auto;font-size:10px;justify-content:center}
+.message-avatar{width:24px;height:24px;border-radius:50%;overflow:hidden;flex-shrink:0}
+.message-avatar img{width:100%;height:100%;object-fit:cover}
+.message-content{flex:1}
+.message-author{font-size:9px;opacity:.8;margin-bottom:2px;font-weight:bold}
+.input-area{padding:10px;border-top:1px solid #eee;display:flex;gap:6px}
+.input-area input{flex:1;padding:8px;border:1px solid #ddd;border-radius:15px;outline:none;font-size:11px}
+.voice-controls{padding:10px;border-top:1px solid #eee;text-align:center}
+.voice-status{margin-bottom:10px;font-size:11px;color:#666}
+.voice-buttons{display:flex;gap:8px;justify-content:center;margin-bottom:8px}
+.voice-btn{width:45px;height:45px;border:none;border-radius:50%;cursor:pointer;font-size:18px;transition:all .3s;display:flex;align-items:center;justify-content:center}
+.voice-btn.mic{background:#dc3545;color:white}
+.voice-btn.mic.active{background:#28a745;animation:pulse 1.5s infinite}
+.voice-btn.hand{background:#ffc107;color:#000}
+.voice-btn.hand.active{background:#fd7e14;animation:bounce .6s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.host-controls{border-top:1px solid #eee;padding:12px;background:#f8f9fa}
+.host-label{font-size:11px;color:#666;margin-bottom:8px;text-align:center;font-weight:bold}
+.timer{position:absolute;top:15px;left:15px;background:rgba(255,255,255,.95);padding:15px;border-radius:15px;text-align:center;min-width:120px;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.timer-display{font:bold 22px monospace;color:#667eea;margin-bottom:10px}
+.online{position:absolute;top:15px;right:15px;background:rgba(255,255,255,.95);padding:15px;border-radius:15px;min-width:180px;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.online-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.online-user{display:flex;align-items:center;gap:4px;background:#f8f9fa;padding:4px 8px;border-radius:12px;font-size:10px}
+.online-user img{width:20px;height:20px;border-radius:50%;object-fit:cover}
+.room-status{position:absolute;top:90px;right:15px;background:rgba(255,255,255,.95);padding:10px 15px;border-radius:15px;font-size:12px;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.room-status.muted{background:rgba(220,53,69,.1);border:2px solid #dc3545;color:#dc3545}
+.tree{position:absolute;z-index:1;width:35px;height:70px}
+.tree::before{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:8px;height:40px;background:#8B4513;border-radius:4px}
+.tree::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:35px;height:35px;background:radial-gradient(circle,#32CD32,#228B22);border-radius:50%}
+.pond{position:absolute;width:100px;height:60px;background:radial-gradient(ellipse,#4169E1,#191970);border-radius:50%;bottom:100px;right:140px;animation:ripple 4s infinite;box-shadow:inset 0 0 20px rgba(0,0,0,.3)}
+@keyframes ripple{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
+.flower{position:absolute;width:12px;height:12px;z-index:1}
+.flower::before{content:'';position:absolute;width:10px;height:10px;background:#FF69B4;border-radius:50%;top:1px;left:1px}
+.flower::after{content:'';position:absolute;width:3px;height:8px;background:#32CD32;bottom:-8px;left:4.5px;border-radius:2px}
+.label{font-weight:bold;margin:8px 0 4px;color:#555;font-size:11px}
+.hidden{display:none!important}
+@media (max-width:768px){.sidebar{width:280px}.avatar{width:50px;height:50px}.timer,.online{position:relative;top:auto;left:auto;right:auto;margin:10px;display:inline-block}}
+</style>
+</head>
+<body>
+<div class="login-screen" id="loginScreen">
+<div class="login-card">
+<div class="login-title">🧘‍♀️ Vườn Thiền Online</div>
+<div class="login-subtitle">Đăng nhập để tham gia cộng đồng thiền định</div>
+<div id="g_id_onload" data-client_id="YOUR_GOOGLE_CLIENT_ID" data-callback="handleGoogleLogin" data-auto_prompt="false"></div>
+<button class="login-btn google" onclick="signInWithGoogle()">
+<svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+Đăng nhập với Google
+</button>
+<button class="login-btn facebook" onclick="signInWithFacebook()">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+Đăng nhập với Facebook
+</button>
+<button class="login-btn guest" onclick="continueAsGuest()">
+🎭 Tiếp tục với tư cách khách
+</button>
+</div>
+</div>
+
+<div class="app hidden" id="app">
+<div class="garden" id="garden">
+<div class="tree" style="top:100px;left:200px"></div>
+<div class="tree" style="top:180px;left:350px"></div>
+<div class="tree" style="top:140px;right:200px"></div>
+<div class="flower" style="top:160px;left:230px"></div>
+<div class="flower" style="top:220px;left:280px"></div>
+<div class="flower" style="top:200px;right:230px"></div>
+<div class="pond"></div>
+<div class="timer">
+<div class="timer-display" id="timer">00:00</div>
+<button class="btn btn-primary" onclick="startTimer()">Start</button>
+<button class="btn btn-primary" onclick="resetTimer()">Reset</button>
+</div>
+<div class="online">
+<div style="font-weight:bold;color:#667eea;margin-bottom:8px">🌸 Online: <span id="count">1</span></div>
+<div class="online-list" id="onlineList"></div>
+</div>
+<div class="room-status" id="roomStatus">🔊 Phòng đang mở</div>
+</div>
+<div class="sidebar">
+<div class="user-profile">
+<div class="profile-avatar">
+<img id="profileAvatar" src="" alt="Avatar">
+</div>
+<div class="profile-name" id="profileName">Người dùng</div>
+<div class="profile-email" id="profileEmail"></div>
+<button class="logout-btn" onclick="logout()">Đăng xuất</button>
+</div>
+<div class="controls">
+<div class="label">Tư thế:</div>
+<div class="btn-group">
+<button class="btn btn-primary active" onclick="changeState('standing')">Đứng</button>
+<button class="btn btn-primary" onclick="changeState('sitting')">Ngồi</button>
+</div>
+<div class="label">Thiền:</div>
+<button class="btn btn-primary" id="meditateBtn" onclick="toggleMeditate()">Bắt đầu thiền</button>
+</div>
+<div class="chat">
+<div class="messages" id="messages"></div>
+<div class="input-area">
+<input type="text" id="messageInput" placeholder="Tin nhắn..." onkeypress="if(event.key==='Enter')sendMessage()">
+<button class="btn btn-primary" onclick="sendMessage()">Gửi</button>
+</div>
+</div>
+<div class="voice-controls">
+<div class="voice-status" id="voiceStatus">🎤 Voice Chat: Đang mở</div>
+<div class="voice-buttons">
+<button class="voice-btn mic" id="micBtn" onclick="toggleMic()" title="Bật/tắt mic">🎤</button>
+<button class="voice-btn hand" id="handBtn" onclick="toggleHand()" title="Giơ tay xin phát biểu">✋</button>
+</div>
+</div>
+<div class="host-controls hidden" id="hostControls">
+<div class="host-label">👑 Quyền chủ phòng:</div>
+<div class="btn-group">
+<button class="btn btn-warning" id="muteRoomBtn" onclick="toggleMuteRoom()">🔇 Mute Room</button>
+<button class="btn btn-danger" onclick="clearHands()">✋ Clear Hands</button>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+let currentUser=null;
+let users=new Map();
+let isHost=false;
+let t={m:0,s:0,i:null};
+let roomMuted=false;
+let raisedHands=[];
+
+// Initialize Facebook SDK
+window.fbAsyncInit=function(){
+FB.init({
+appId:'YOUR_FACEBOOK_APP_ID',
+cookie:true,
+xfbml:true,
+version:'v18.0'
+});
+};
+
+// Google Login
+function signInWithGoogle(){
+google.accounts.id.initialize({
+client_id:'YOUR_GOOGLE_CLIENT_ID',
+callback:handleGoogleLogin
+});
+google.accounts.id.prompt();
+}
+
+function handleGoogleLogin(response){
+const payload=parseJwt(response.credential);
+currentUser={
+id:payload.sub,
+name:payload.name,
+email:payload.email,
+avatar:payload.picture,
+provider:'google',
+x:300,y:200,state:'standing',meditating:false,micOn:false,handRaised:false
+};
+loginSuccess();
+}
+
+// Facebook Login
+function signInWithFacebook(){
+FB.login(function(response){
+if(response.authResponse){
+FB.api('/me',{fields:'id,name,email,picture.width(200).height(200)'},function(response){
+currentUser={
+id:response.id,
+name:response.name,
+email:response.email||'',
+avatar:response.picture.data.url,
+provider:'facebook',
+x:300,y:200,state:'standing',meditating:false,micOn:false,handRaised:false
+};
+loginSuccess();
+});
+}else{
+addSystemMessage('❌ Đăng nhập Facebook thất bại');
+}
+},{scope:'email'});
+}
+
+// Guest Login
+function continueAsGuest(){
+const guestNames=['Thiền sinh ẩn danh','Người tham gia','Khách viếng thăm','Thiền sinh mới'];
+const randomName=guestNames[Math.floor(Math.random()*guestNames.length)];
+currentUser={
+id:'guest_'+Date.now(),
+name:randomName,
+email:'',
+avatar:generateGuestAvatar(),
+provider:'guest',
+x:300,y:200,state:'standing',meditating:false,micOn:false,handRaised:false
+};
+loginSuccess();
+}
+
+function generateGuestAvatar(){
+const canvas=document.createElement('canvas');
+canvas.width=200;canvas.height=200;
+const ctx=canvas.getContext('2d');
+const colors=['#FF6B6B','#4ECDC4','#45B7D1','#96CEB4','#FECA57','#FF9FF3','#54A0FF'];
+const bgColor=colors[Math.floor(Math.random()*colors.length)];
+ctx.fillStyle=bgColor;
+ctx.fillRect(0,0,200,200);
+ctx.fillStyle='white';
+ctx.font='bold 80px Arial';
+ctx.textAlign='center';
+ctx.fillText(currentUser.name.charAt(0).toUpperCase(),100,130);
+return canvas.toDataURL();
+}
+
+function parseJwt(token){
+const base64Url=token.split('.')[1];
+const base64=base64Url.replace(/-/g,'+').replace(/_/g,'/');
+const jsonPayload=decodeURIComponent(atob(base64).split('').map(function(c){
+return '%'+('00'+c.charCodeAt(0).toString(16)).slice(-2);
+}).join(''));
+return JSON.parse(jsonPayload);
+}
+
+function loginSuccess(){
+document.getElementById('loginScreen').classList.add('hidden');
+document.getElementById('app').classList.remove('hidden');
+updateProfile();
+initializeApp();
+checkHostStatus();
+addSystemMessage(`🌸 ${currentUser.name} đã vào vườn thiền`);
+}
+
+function updateProfile(){
+document.getElementById('profileAvatar').src=currentUser.avatar;
+document.getElementById('profileName').textContent=currentUser.name;
+document.getElementById('profileEmail').textContent=currentUser.email;
+}
+
+function logout(){
+if(currentUser.provider==='google'){
+google.accounts.id.disableAutoSelect();
+}else if(currentUser.provider==='facebook'){
+FB.logout();
+}
+currentUser=null;
+document.getElementById('loginScreen').classList.remove('hidden');
+document.getElementById('app').classList.add('hidden');
+if(t.i)clearInterval(t.i);
+}
+
+function checkHostStatus(){
+// First user becomes host
+if(users.size===0){
+isHost=true;
+currentUser.isHost=true;
+document.getElementById('hostControls').classList.remove('hidden');
+addSystemMessage('👑 Bạn là chủ phòng và có quyền quản lý voice chat');
+}
+}
+
+function createUserAvatar(user){
+const avatar=document.createElement('div');
+avatar.className=`avatar ${user.state}`;
+avatar.id=user.id;
+avatar.style.left=user.x+'px';
+avatar.style.top=user.y+'px';
+avatar.innerHTML=`
+<img src="${user.avatar}" alt="${user.name}">
+<div class="name ${user.isHost?'host':''}">${user.name}${user.isHost?' (Host)':''}</div>
+<div class="status-icon" style="display:none"></div>
+`;
+document.getElementById('garden').appendChild(avatar);
+updateOnlineList();
+}
+
+function updateUserAvatar(user){
+const avatar=document.getElementById(user.id);
+if(avatar){
+avatar.className=`avatar ${user.state}`;
+if(user.meditating)avatar.classList.add('meditating');
+if(user.micOn)avatar.classList.add('speaking');
+if(user.handRaised)avatar.classList.add('raising-hand');
+if(roomMuted&&!user.isHost)avatar.classList.add('muted');
+const statusIcon=avatar.querySelector('.status-icon');
+if(user.meditating){
+statusIcon.textContent='🧘';
+statusIcon.style.display='flex';
+statusIcon.style.background='#FFD700';
+}else if(user.micOn){
+statusIcon.textContent='🎤';
+statusIcon.style.display='flex';
+statusIcon.style.background='#28a745';
+}else if(user.handRaised){
+statusIcon.textContent='✋';
+statusIcon.style.display='flex';
+statusIcon.style.background='#ffc107';
+}else{
+statusIcon.style.display='none';
+}
+}
+}
+
+function updateOnlineList(){
+const list=document.getElementById('onlineList');
+const count=document.getElementById('count');
+list.innerHTML='';
+count.textContent=users.size+1;
+// Add current user
+const userDiv=document.createElement('div');
+userDiv.className='online-user';
+userDiv.innerHTML=`<img src="${currentUser.avatar}"><span>${currentUser.name}${currentUser.isHost?' 👑':''}</span>`;
+list.appendChild(userDiv);
+// Add other users  
+users.forEach(user=>{
+const userDiv=document.createElement('div');
+userDiv.className='online-user';
+userDiv.innerHTML=`<img src="${user.avatar}"><span>${user.name}${user.isHost?' 👑':''}</span>`;
+list.appendChild(userDiv);
+});
+}
+
+function changeState(state){
+currentUser.state=state;
+updateUserAvatar(currentUser);
+document.querySelectorAll('.btn-group .btn').forEach(b=>b.classList.remove('active'));
+event.target.classList.add('active');
+addSystemMessage(`${currentUser.name} đã ${state==='sitting'?'ngồi thiền':'đứng dậy'}`);
+}
+
+function toggleMeditate(){
+currentUser.meditating=!currentUser.meditating;
+const btn=document.getElementById('meditateBtn');
+if(currentUser.meditating){
+btn.textContent='Dừng thiền';
+btn.classList.add('active');
+addSystemMessage(`🧘‍♀️ ${currentUser.name} bắt đầu thiền`);
+}else{
+btn.textContent='Bắt đầu thiền';
+btn.classList.remove('active');
+addSystemMessage(`${currentUser.name} kết thúc thiền`);
+}
+updateUserAvatar(currentUser);
+}
+
+function toggleMic(){
+if(roomMuted&&!isHost){
+addSystemMessage('❌ Phòng đang mute. Hãy giơ tay để xin phát biểu.');
+return;
+}
+currentUser.micOn=!currentUser.micOn;
+const btn=document.getElementById('micBtn');
+const status=document.getElementById('voiceStatus');
+if(currentUser.micOn){
+btn.classList.add('active');
+status.textContent='🎤 Đang nói...';
+addSystemMessage(`🎤 ${currentUser.name} bắt đầu nói`);
+}else{
+btn.classList.remove('active');
+status.textContent=roomMuted?'🔇 Phòng đang mute':'🎤 Voice Chat: Đang mở';
+addSystemMessage(`🎤 ${currentUser.name} dừng nói`);
+}
+updateUserAvatar(currentUser);
+}
+
+function toggleHand(){
+currentUser.handRaised=!currentUser.handRaised;
+const btn=document.getElementById('handBtn');
+if(currentUser.handRaised){
+btn.classList.add('active');
+raisedHands.push(currentUser.name);
+addSystemMessage(`✋ ${currentUser.name} giơ tay xin phát biểu`);
+}else{
+btn.classList.remove('active');
+raisedHands=raisedHands.filter(name=>name!==currentUser.name);
+addSystemMessage(`✋ ${currentUser.name} hạ tay`);
+}
+updateUserAvatar(currentUser);
+updateRaisedHandsList();
+}
+
+function toggleMuteRoom(){
+if(!isHost)return;
+roomMuted=!roomMuted;
+const btn=document.getElementById('muteRoomBtn');
+const status=document.getElementById('roomStatus');
+const voiceStatus=document.getElementById('voiceStatus');
+if(roomMuted){
+btn.textContent='🔊 Unmute Room';
+btn.classList.remove('btn-warning');
+btn.classList.add('btn-danger');
+status.textContent='🔇 Phòng đang mute';
+status.classList.add('muted');
+voiceStatus.textContent='🔇 Phòng đang mute';
+addSystemMessage('🔇 Chủ phòng đã mute toàn bộ. Giơ tay để xin phát biểu.');
+}else{
+btn.textContent='🔇 Mute Room';
+btn.classList.remove('btn-danger');
+btn.classList.add('btn-warning');
+status.textContent='🔊 Phòng đang mở';
+status.classList.remove('muted');
+voiceStatus.textContent='🎤 Voice Chat: Đang mở';
+addSystemMessage('🔊 Chủ phòng đã unmute phòng. Mọi người có thể nói tự do.');
+}
+// Update all avatars
+updateUserAvatar(currentUser);
+users.forEach(user=>updateUserAvatar(user));
+}
+
+function clearHands(){
+if(!isHost)return;
+raisedHands=[];
+currentUser.handRaised=false;
+document.getElementById('handBtn').classList.remove('active');
+document.querySelectorAll('.avatar').forEach(a=>a.classList.remove('raising-hand'));
+updateUserAvatar(currentUser);
+addSystemMessage('✋ Chủ phòng đã clear tất cả raised hands');
+}
+
+function updateRaisedHandsList(){
+if(raisedHands.length>0){
+addSystemMessage(`✋ Đang giơ tay (${raisedHands.length}): ${raisedHands.join(', ')}`);
+}
+}
+
+function startTimer(){
+if(!t.i){
+t.i=setInterval(()=>{
+t.s++;
+if(t.s>=60){t.m++;t.s=0}
+document.getElementById('timer').textContent=String(t.m).padStart(2,'0')+':'+String(t.s).padStart(2,'0');
+},1000);
+addSystemMessage('⏰ Bắt đầu đồng hồ thiền');
+}
+}
+
+function resetTimer(){
+if(t.i)clearInterval(t.i);
+t.i=null;t.m=0;t.s=0;
+document.getElementById('timer').textContent='00:00';
+addSystemMessage('⏰ Đã reset đồng hồ');
+}
+
+function sendMessage(){
+const input=document.getElementById('messageInput');
+const msg=input.value.trim();
+if(msg){
+addMessage(currentUser,msg,true);
+input.value='';
+// Simulate responses from NPCs
+setTimeout(()=>{
+const responses=[
+'Cảm ơn bạn đã chia sẻ 🙏',
+'Thật yên bình ở đây',
+'Tôi cũng cảm thấy thư giãn',
+'Hãy cùng tĩnh tâm nhé',
+'Avatar của bạn đẹp quá!',
+'Cảm ơn bạn đã tạo không gian này'
+];
+const npcUsers=[
+{name:'🌸 Minh An',avatar:'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=200&h=200&fit=crop&crop=face'},
+{name:'🍃 Thu Hà',avatar:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face'},
+{name:'🌺 Đức Nam',avatar:'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face'},
+{name:'🌿 Linh Chi',avatar:'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face'}
+];
+const randomUser=npcUsers[Math.floor(Math.random()*npcUsers.length)];
+const randomResponse=responses[Math.floor(Math.random()*responses.length)];
+addMessage(randomUser,randomResponse);
+},1000+Math.random()*3000);
+}
+}
+
+function addMessage(user,text,isOwn=false){
+const messages=document.getElementById('messages');
+const div=document.createElement('div');
+div.className=`message ${isOwn?'own':'other'}`;
+div.innerHTML=`
+<div class="message-avatar">
+<img src="${user.avatar}" alt="${user.name}">
+</div>
+<div class="message-content">
+<div class="message-author">${user.name}</div>
+<div>${text}</div>
+</div>
+`;
+messages.appendChild(div);
+messages.scrollTop=messages.scrollHeight;
+if(messages.children.length>50)messages.removeChild(messages.firstChild);
+}
+
+function addSystemMessage(text){
+const messages=document.getElementById('messages');
+const div=document.createElement('div');
+div.className='message system';
+div.innerHTML=`<div class="message-content">${text}</div>`;
+messages.appendChild(div);
+messages.scrollTop=messages.scrollHeight;
+}
+
+function initializeApp(){
+createUserAvatar(currentUser);
+createNPCUsers();
+addSystemMessage('🌸 Chào mừng đến vườn thiền! Click vào vườn để di chuyển avatar.');
+}
+
+function createNPCUsers(){
+const npcData=[
+{id:'npc1',name:'🌸 Minh An',avatar:'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=200&h=200&fit=crop&crop=face',x:220,y:180,state:'sitting',meditating:true},
+{id:'npc2',name:'🍃 Thu Hà',avatar:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face',x:380,y:220,state:'sitting',meditating:true},
+{id:'npc3',name:'🌺 Đức Nam',avatar:'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face',x:320,y:160,state:'standing',meditating:false},
+{id:'npc4',name:'🌿 Linh Chi',avatar:'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face',x:280,y:280,state:'sitting',meditating:true}
+];
+
+npcData.forEach((npc,index)=>{
+setTimeout(()=>{
+const user={...npc,micOn:false,handRaised:Math.random()<.2,isHost:false};
+users.set(user.id,user);
+createUserAvatar(user);
+addSystemMessage(`${user.name} đã vào vườn thiền`);
+// Random activities for NPCs
+setInterval(()=>{
+if(Math.random()<.1){
+user.state=user.state==='standing'?'sitting':'standing';
+updateUserAvatar(user);
+}
+if(Math.random()<.05){
+user.handRaised=!user.handRaised;
+if(user.handRaised){
+raisedHands.push(user.name);
+addSystemMessage(`✋ ${user.name} giơ tay xin phát biểu`);
+}else{
+raisedHands=raisedHands.filter(name=>name!==user.name);
+addSystemMessage(`✋ ${user.name} hạ tay`);
+}
+updateUserAvatar(user);
+updateRaisedHandsList();
+}
+},15000+Math.random()*20000);
+},index*2000);
+});
+}
+
+// Garden click to move
+document.getElementById('garden').addEventListener('click',e=>{
+if(e.target.id==='garden'||e.target.classList.contains('garden')){
+const rect=e.target.getBoundingClientRect();
+currentUser.x=Math.max(30,Math.min(e.clientX-rect.left-30,rect.width-350));
+currentUser.y=Math.max(30,Math.min(e.clientY-rect.top-30,rect.height-90));
+const avatar=document.getElementById(currentUser.id);
+avatar.style.left=currentUser.x+'px';
+avatar.style.top=currentUser.y+'px';
+avatar.classList.add('walking');
+setTimeout(()=>avatar.classList.remove('walking'),1000);
+}
+});
+
+// Auto generate some chat activity
+setInterval(()=>{
+if(Math.random()<.3){
+const messages=[
+'Vườn này thật yên bình 🌸',
+'Tôi đang cảm thấy rất thư giãn',
+'Cảm ơn mọi người đã tạo không gian đẹp',
+'Avatar thật của mọi người đẹp quá!',
+'Thiền ở đây rất thoải mái',
+'Mọi người có thể chia sẻ cảm xúc không?'
+];
+const npcUsers=Array.from(users.values());
+if(npcUsers.length>0){
+const randomUser=npcUsers[Math.floor(Math.random()*npcUsers.length)];
+const randomMessage=messages[Math.floor(Math.random()*messages.length)];
+addMessage(randomUser,randomMessage);
+}
+}
+},20000+Math.random()*30000);
+
+console.log('🌸 Vườn Thiền với Login System sẵn sàng!');
+console.log('Lưu ý: Cần cấu hình GOOGLE_CLIENT_ID và FACEBOOK_APP_ID để login hoạt động');
+</script>
+</body>
+</html>
