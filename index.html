@@ -1,391 +1,894 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vườn Thiền Online</title>
-<meta name="description" content="Ứng dụng thiền đa người dùng với avatar hoạt hình, chat và voice">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧘</text></svg>">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font:12px Arial,sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);height:100vh;overflow:hidden}
-.app{display:flex;height:100vh}
-.garden{flex:1;position:relative;background:linear-gradient(to bottom,#87CEEB 0%,#98FB98 20%,#90EE90 40%,#32CD32 60%,#228B22 80%,#006400 100%);overflow:hidden}
-.avatar{position:absolute;width:48px;height:64px;cursor:pointer;transition:all .3s;z-index:10}
-.avatar.standing .s{width:48px;height:64px;background:radial-gradient(circle at 24px 16px,#FDBCB4 12px,transparent 12px),radial-gradient(circle at 24px 12px,#8B4513 14px,transparent 14px),radial-gradient(circle at 20px 16px,#000 2px,transparent 2px),radial-gradient(circle at 28px 16px,#000 2px,transparent 2px),linear-gradient(to bottom,#4169E1 20px,#4169E1 45px,transparent 45px) 12px 20px/24px 25px no-repeat,linear-gradient(to bottom,#FDBCB4 0,#FDBCB4 20px) 6px 25px/8px 20px no-repeat,linear-gradient(to bottom,#FDBCB4 0,#FDBCB4 20px) 34px 25px/8px 20px no-repeat,linear-gradient(to bottom,#000080 0,#000080 20px) 16px 45px/6px 20px no-repeat,linear-gradient(to bottom,#000080 0,#000080 20px) 26px 45px/6px 20px no-repeat}
-.avatar.sitting .s{width:48px;height:50px;background:radial-gradient(circle at 24px 16px,#FDBCB4 12px,transparent 12px),radial-gradient(circle at 24px 12px,#8B4513 14px,transparent 14px),linear-gradient(to right,#000 0,#000 8px) 18px 16px/8px 1px no-repeat,linear-gradient(to bottom,#4169E1 20px,#4169E1 35px,transparent 35px) 12px 20px/24px 15px no-repeat,ellipse(12px 8px) at 18px 42px,#000080,ellipse(12px 8px) at 30px 42px,#000080}
-.avatar.walking{animation:walk .8s infinite}
-@keyframes walk{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-.avatar.meditating{animation:glow 2s ease-in-out infinite alternate}
-@keyframes glow{0%{filter:brightness(.9)}100%{filter:brightness(1.3) drop-shadow(0 0 8px gold)}}
-.avatar.raising-hand::after{content:'✋';position:absolute;top:-25px;left:50%;transform:translateX(-50%);font-size:20px;animation:wave .5s infinite alternate}
-@keyframes wave{0%{transform:translateX(-50%) rotate(-10deg)}100%{transform:translateX(-50%) rotate(10deg)}}
-.avatar.speaking{border:2px solid #28a745;border-radius:50%;animation:speak-pulse 1s infinite}
-@keyframes speak-pulse{0%,100%{border-color:#28a745}50%{border-color:#20c997}}
-.avatar.muted{opacity:.5;filter:grayscale(50%)}
-.name{position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.9);padding:1px 6px;border-radius:8px;font-size:9px;font-weight:bold;white-space:nowrap}
-.name.host{background:#FFD700;color:#000}
-.sidebar{width:300px;background:rgba(255,255,255,.96);display:flex;flex-direction:column;border-left:1px solid rgba(255,255,255,.3)}
-.controls{padding:15px;border-bottom:1px solid #eee}
-.btn-group{display:flex;gap:6px;margin:8px 0}
-.btn{padding:8px 12px;border:none;border-radius:15px;cursor:pointer;font-size:11px;font-weight:bold;transition:all .3s;flex:1;text-align:center}
-.btn-primary{background:#667eea;color:white}
-.btn-primary:hover{background:#5a6fd8;transform:translateY(-1px)}
-.btn.active{background:#28a745}
-.btn-warning{background:#ffc107;color:#000}
-.btn-danger{background:#dc3545;color:white}
-.btn:disabled{background:#ccc;cursor:not-allowed;transform:none}
-.chat{flex:1;display:flex;flex-direction:column}
-.messages{flex:1;padding:10px;overflow-y:auto;max-height:220px;background:#f8f9fa}
-.message{margin:6px 0;padding:6px 10px;border-radius:12px;max-width:90%;word-wrap:break-word;font-size:11px}
-.message.own{background:#667eea;color:white;margin-left:auto;text-align:right}
-.message.other{background:white;border:1px solid #ddd}
-.message.system{background:#e9ecef;color:#495057;font-style:italic;text-align:center;margin:4px auto;font-size:10px}
-.input-area{padding:10px;border-top:1px solid #eee;display:flex;gap:6px}
-.input-area input{flex:1;padding:8px;border:1px solid #ddd;border-radius:15px;outline:none;font-size:11px}
-.voice-controls{padding:10px;border-top:1px solid #eee;text-align:center}
-.voice-status{margin-bottom:10px;font-size:11px;color:#666}
-.voice-buttons{display:flex;gap:6px;justify-content:center;margin-bottom:8px}
-.voice-btn{width:40px;height:40px;border:none;border-radius:50%;cursor:pointer;font-size:16px;transition:all .3s;display:flex;align-items:center;justify-content:center}
-.voice-btn.mic{background:#dc3545;color:white}
-.voice-btn.mic.active{background:#28a745;animation:pulse 1.5s infinite}
-.voice-btn.hand{background:#ffc107;color:#000}
-.voice-btn.hand.active{background:#fd7e14;animation:bounce .6s infinite}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-.host-controls{border-top:1px solid #eee;padding:10px;background:#f8f9fa}
-.host-label{font-size:10px;color:#666;margin-bottom:8px;text-align:center}
-.timer{position:absolute;top:15px;left:15px;background:rgba(255,255,255,.9);padding:12px;border-radius:12px;text-align:center;min-width:110px}
-.timer-display{font:bold 20px monospace;color:#667eea;margin-bottom:8px}
-.online{position:absolute;top:15px;right:15px;background:rgba(255,255,255,.9);padding:12px;border-radius:12px;min-width:160px}
-.room-status{position:absolute;top:80px;right:15px;background:rgba(255,255,255,.9);padding:8px 12px;border-radius:12px;font-size:11px}
-.room-status.muted{background:rgba(220,53,69,.1);border:1px solid #dc3545;color:#dc3545}
-.tree{position:absolute;z-index:1;width:30px;height:65px}
-.tree::before{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:6px;height:35px;background:#8B4513;border-radius:3px}
-.tree::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:30px;height:30px;background:radial-gradient(circle,#32CD32,#228B22);border-radius:50%}
-.pond{position:absolute;width:80px;height:50px;background:radial-gradient(ellipse,#4169E1,#191970);border-radius:50%;bottom:80px;right:120px;animation:ripple 4s infinite}
-@keyframes ripple{0%,100%{transform:scale(1)}50%{transform:scale(1.01)}}
-.flower{position:absolute;width:8px;height:8px;background:#FF69B4;border-radius:50%;z-index:1}
-.flower::after{content:'';position:absolute;width:2px;height:6px;background:#32CD32;bottom:-6px;left:3px}
-.username{width:100%;padding:6px;border:1px solid #ddd;border-radius:12px;margin-bottom:10px;text-align:center;font-size:11px}
-.label{font-weight:bold;margin:8px 0 4px;color:#555;font-size:11px}
-@media (max-width:768px){.sidebar{width:280px}.avatar{width:40px;height:52px}.timer,.online{position:relative;top:auto;left:auto;right:auto;margin:10px;display:inline-block}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meditation Room V2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+        }
+
+        .room-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: cover;
+            background-position: center;
+            transition: background 0.5s ease;
+        }
+
+        .room-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:%23e8f4fd;stop-opacity:1" /><stop offset="100%" style="stop-color:%23b8e6b8;stop-opacity:1" /></linearGradient></defs><rect width="1200" height="800" fill="url(%23skyGrad)"/><circle cx="200" cy="200" r="60" fill="%23ffeb3b" opacity="0.8"/><rect x="0" y="600" width="1200" height="200" fill="%2366bb6a"/><ellipse cx="300" cy="650" rx="80" ry="50" fill="%234caf50"/><ellipse cx="700" cy="680" rx="100" ry="60" fill="%234caf50"/><ellipse cx="1000" cy="630" rx="90" ry="45" fill="%234caf50"/><path d="M100,700 Q200,650 300,700 T500,700" stroke="%23388e3c" stroke-width="4" fill="none"/><circle cx="150" cy="150" r="3" fill="%23fff" opacity="0.7"/><circle cx="800" cy="100" r="2" fill="%23fff" opacity="0.6"/><circle cx="1000" cy="180" r="2.5" fill="%23fff" opacity="0.8"/></svg>');
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+        }
+
+        .character {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .character:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        .character.sitting {
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .character img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .chat-bubble {
+            position: absolute;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.95);
+            padding: 8px 12px;
+            border-radius: 20px;
+            max-width: 160px;
+            word-wrap: break-word;
+            font-size: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 15;
+            animation: fadeInOut 3s ease-in-out;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            10%, 90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        .controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            background: rgba(255,255,255,1);
+            transform: translateY(-2px);
+        }
+
+        .music-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+            background: rgba(255,255,255,0.9);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .music-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        .music-item {
+            padding: 8px;
+            margin: 2px 0;
+            background: rgba(255,255,255,0.7);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .music-item:hover {
+            background: rgba(255,255,255,1);
+        }
+
+        .music-item.playing {
+            background: #4caf50;
+            color: white;
+        }
+
+        .chat-input {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 25px;
+            width: 200px;
+            background: rgba(255,255,255,0.9);
+            font-size: 14px;
+        }
+
+        .profile-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            border: 3px solid #ddd;
+        }
+
+        .stars {
+            color: #ffd700;
+            font-size: 20px;
+            margin: 10px 0;
+        }
+
+        .avatar-selector {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .avatar-option {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border 0.3s ease;
+        }
+
+        .avatar-option:hover, .avatar-option.selected {
+            border-color: #4caf50;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .background-selector {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            z-index: 150;
+            display: none;
+        }
+
+        .bg-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .bg-option {
+            width: 80px;
+            height: 60px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .bg-option:hover, .bg-option.selected {
+            border-color: #4caf50;
+        }
+
+        .achievement-badge {
+            display: inline-block;
+            background: #4caf50;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            margin: 2px;
+        }
+
+        .url-input {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        #currentTrack {
+            font-weight: bold;
+            color: #4caf50;
+            margin: 10px 0;
+        }
+
+        .volume-control {
+            margin: 10px 0;
+        }
+
+        .volume-control input {
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-<div class="app">
-<div class="garden" id="garden">
-<div class="tree" style="top:90px;left:180px"></div>
-<div class="tree" style="top:160px;left:320px"></div>
-<div class="tree" style="top:120px;right:180px"></div>
-<div class="flower" style="top:140px;left:200px"></div>
-<div class="flower" style="top:200px;left:250px"></div>
-<div class="flower" style="top:180px;right:200px"></div>
-<div class="pond"></div>
-<div class="timer">
-<div class="timer-display" id="timer">00:00</div>
-<button class="btn btn-primary" onclick="startTimer()">Start</button>
-<button class="btn btn-primary" onclick="resetTimer()">Reset</button>
-</div>
-<div class="online">
-<div style="font-weight:bold;color:#667eea;margin-bottom:6px">🌸 Online: <span id="count">5</span></div>
-<div style="font-size:10px;line-height:1.3" id="userList">Bạn (Host)<br>🌸 Minh An<br>🍃 Thu Hà<br>🌺 Đức Nam<br>🌿 Linh Chi</div>
-</div>
-<div class="room-status" id="roomStatus">🔊 Phòng đang mở</div>
-</div>
-<div class="sidebar">
-<div class="controls">
-<h3 style="margin-bottom:10px;color:#667eea;font-size:14px">🧘‍♀️ Vườn Thiền</h3>
-<input type="text" id="username" class="username" placeholder="Nhập tên..." value="Thiền sinh mới">
-<div class="label">Tư thế:</div>
-<div class="btn-group">
-<button class="btn btn-primary active" onclick="changeState('standing')">Đứng</button>
-<button class="btn btn-primary" onclick="changeState('sitting')">Ngồi</button>
-</div>
-<div class="label">Thiền:</div>
-<button class="btn btn-primary" id="meditateBtn" onclick="toggleMeditate()">Bắt đầu thiền</button>
-</div>
-<div class="chat">
-<div class="messages" id="messages">
-<div class="message system">🌸 Chào mừng đến vườn thiền! Bạn là chủ phòng và có quyền quản lý voice chat.</div>
-</div>
-<div class="input-area">
-<input type="text" id="messageInput" placeholder="Tin nhắn..." onkeypress="if(event.key==='Enter')sendMessage()">
-<button class="btn btn-primary" onclick="sendMessage()">Gửi</button>
-</div>
-</div>
-<div class="voice-controls">
-<div class="voice-status" id="voiceStatus">🎤 Voice Chat: Đang mở</div>
-<div class="voice-buttons">
-<button class="voice-btn mic" id="micBtn" onclick="toggleMic()" title="Bật/tắt mic">🎤</button>
-<button class="voice-btn hand" id="handBtn" onclick="toggleHand()" title="Giơ tay xin phát biểu">✋</button>
-</div>
-<div style="font-size:9px;color:#666;margin-top:5px">Click mic để nói, giơ tay để xin phát biểu</div>
-</div>
-<div class="host-controls" id="hostControls">
-<div class="host-label">👑 Quyền chủ phòng:</div>
-<div class="btn-group">
-<button class="btn btn-warning" id="muteRoomBtn" onclick="toggleMuteRoom()">🔇 Mute Room</button>
-<button class="btn btn-danger" onclick="clearHands()">✋ Clear Hands</button>
-</div>
-</div>
-</div>
-</div>
-<script>
-let u={name:'Thiền sinh mới',x:300,y:200,state:'standing',meditating:false,isHost:true,micOn:false,handRaised:false};
-let t={m:0,s:0,i:null};
-let users=['🌸 Minh An','🍃 Thu Hà','🌺 Đức Nam','🌿 Linh Chi'];
-let roomMuted=false;
-let raisedHands=[];
+    <div class="room-container">
+        <div class="room-background"></div>
+        
+        <div class="controls">
+            <button class="btn" onclick="sitDown()">Ngồi thiền</button>
+            <button class="btn" onclick="standUp()">Đứng dậy</button>
+            <button class="btn" onclick="showProfile()">Profile</button>
+            <button class="btn" onclick="showBackgroundSelector()">Đổi nền</button>
+        </div>
 
-function createAvatar(){
-const a=document.createElement('div');
-a.className=`avatar ${u.state}`;
-a.id='myAvatar';
-a.style.left=u.x+'px';
-a.style.top=u.y+'px';
-a.innerHTML=`<div class="s"></div><div class="name host">${u.name} (Host)</div>`;
-document.getElementById('garden').appendChild(a);
-}
+        <div class="music-controls">
+            <h4>🎵 Nhạc thiền</h4>
+            <div id="currentTrack">Chưa phát nhạc</div>
+            <div class="volume-control">
+                <label>Âm lượng: </label>
+                <input type="range" id="volumeSlider" min="0" max="100" value="50" onchange="setVolume(this.value)">
+            </div>
+            <input type="text" id="musicUrl" placeholder="Dán URL YouTube/SoundCloud/Spotify" class="url-input">
+            <button class="btn" onclick="addMusicFromUrl()">Thêm nhạc</button>
+            <input type="file" id="musicUpload" accept="audio/*" style="display:none" onchange="uploadMusic(event)">
+            <button class="btn" onclick="document.getElementById('musicUpload').click()">Upload nhạc</button>
+            <div class="music-list" id="musicList"></div>
+        </div>
 
-function createNPCs(){
-users.forEach((name,i)=>{
-const a=document.createElement('div');
-const isRaising=Math.random()>.7;
-const isSitting=Math.random()>.5;
-a.className=`avatar ${isSitting?'sitting meditating':'standing'}`;
-a.id=`npc_${i}`;
-a.style.left=(180+i*80)+'px';
-a.style.top=(160+Math.random()*80)+'px';
-a.innerHTML=`<div class="s"></div><div class="name">${name}</div>`;
-if(isRaising){
-a.classList.add('raising-hand');
-raisedHands.push(name);
-}
-document.getElementById('garden').appendChild(a);
-});
-updateRaisedHandsList();
-}
+        <div class="chat-input">
+            <input type="text" id="chatMessage" placeholder="Nhập tin nhắn..." maxlength="160" onkeypress="if(event.key==='Enter') sendMessage()">
+            <button class="btn" onclick="sendMessage()">Gửi</button>
+        </div>
+    </div>
 
-function changeState(state){
-u.state=state;
-const a=document.getElementById('myAvatar');
-a.className=`avatar ${state}`;
-if(u.meditating)a.classList.add('meditating');
-if(u.micOn)a.classList.add('speaking');
-if(u.handRaised)a.classList.add('raising-hand');
-document.querySelectorAll('.btn-group .btn').forEach(b=>b.classList.remove('active'));
-event.target.classList.remove('active');
-addMessage('system',`${u.name} đã ${state==='sitting'?'ngồi thiền':'đứng dậy'}`);
-}
+    <!-- Profile Modal -->
+    <div class="profile-modal" id="profileModal">
+        <div class="profile-content">
+            <h3>Profile thiền sinh</h3>
+            <div class="profile-avatar">
+                <img id="profileAvatar" src="" alt="Avatar">
+            </div>
+            <input type="text" id="userName" placeholder="Tên của bạn" style="width:100%; padding:10px; margin:10px 0; border:1px solid #ddd; border-radius:5px;">
+            
+            <div class="stars" id="achievementStars">⭐⭐⭐</div>
+            <div id="achievementText">Thiền sinh tận tâm - 3 tuần kiên trì</div>
+            
+            <div class="achievement-badge">Người mới</div>
+            <div class="achievement-badge">Kiên trì 1 tuần</div>
+            <div class="achievement-badge">Thiền sư nhỏ</div>
 
-function toggleMeditate(){
-u.meditating=!u.meditating;
-const b=document.getElementById('meditateBtn');
-const a=document.getElementById('myAvatar');
-if(u.meditating){
-b.textContent='Dừng thiền';
-b.classList.add('active');
-a.classList.add('meditating');
-addMessage('system',`${u.name} bắt đầu thiền 🧘‍♀️`);
-}else{
-b.textContent='Bắt đầu thiền';
-b.classList.remove('active');
-a.classList.remove('meditating');
-addMessage('system',`${u.name} kết thúc thiền`);
-}
-}
+            <h4>Chọn avatar:</h4>
+            <div class="avatar-selector" id="avatarSelector"></div>
+            
+            <div style="margin-top: 20px;">
+                <button class="btn" onclick="saveProfile()">Lưu</button>
+                <button class="btn" onclick="closeProfile()">Đóng</button>
+            </div>
+        </div>
+    </div>
 
-function toggleMic(){
-if(roomMuted&&!u.isHost){
-addMessage('system','❌ Phòng đang bị mute. Hãy giơ tay để xin phát biểu.');
-return;
-}
-u.micOn=!u.micOn;
-const btn=document.getElementById('micBtn');
-const avatar=document.getElementById('myAvatar');
-const status=document.getElementById('voiceStatus');
-if(u.micOn){
-btn.classList.add('active');
-avatar.classList.add('speaking');
-status.textContent='🎤 Đang nói...';
-addMessage('system',`🎤 ${u.name} bắt đầu nói`);
-}else{
-btn.classList.remove('active');
-avatar.classList.remove('speaking');
-status.textContent=roomMuted?'🔇 Phòng đang mute':'🎤 Voice Chat: Đang mở';
-addMessage('system',`🎤 ${u.name} dừng nói`);
-}
-}
+    <!-- Character Profile Modal -->
+    <div class="profile-modal" id="characterModal">
+        <div class="profile-content">
+            <div class="profile-avatar">
+                <img id="characterAvatar" src="" alt="Avatar">
+            </div>
+            <h3 id="characterName">Tên nhân vật</h3>
+            <div class="stars" id="characterStars">⭐⭐</div>
+            <p id="characterBio">Thiền sinh mới bắt đầu hành trình tìm hiểu bản thân.</p>
+            <div style="margin-top: 20px;">
+                <button class="btn">Kết bạn</button>
+                <button class="btn">Nhắn tin</button>
+                <button class="btn" style="background:#f44336; color:white;">Block</button>
+            </div>
+            <button class="btn" onclick="closeCharacterModal()" style="margin-top:10px;">Đóng</button>
+        </div>
+    </div>
 
-function toggleHand(){
-u.handRaised=!u.handRaised;
-const btn=document.getElementById('handBtn');
-const avatar=document.getElementById('myAvatar');
-if(u.handRaised){
-btn.classList.add('active');
-avatar.classList.add('raising-hand');
-raisedHands.push(u.name);
-addMessage('system',`✋ ${u.name} giơ tay xin phát biểu`);
-}else{
-btn.classList.remove('active');
-avatar.classList.remove('raising-hand');
-raisedHands=raisedHands.filter(name=>name!==u.name);
-addMessage('system',`✋ ${u.name} hạ tay`);
-}
-updateRaisedHandsList();
-}
+    <!-- Background Selector -->
+    <div class="background-selector" id="backgroundSelector">
+        <h3>Chọn nền thiền</h3>
+        <div class="bg-options">
+            <div class="bg-option" data-bg="garden" style="background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+            <div class="bg-option" data-bg="forest" style="background-image: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);"></div>
+            <div class="bg-option" data-bg="mountain" style="background-image: linear-gradient(135deg, #2196f3 0%, #21cbf3 100%);"></div>
+            <div class="bg-option" data-bg="sunset" style="background-image: linear-gradient(135deg, #ff9800 0%, #f44336 100%);"></div>
+            <div class="bg-option" data-bg="night" style="background-image: linear-gradient(135deg, #673ab7 0%, #3f51b5 100%);"></div>
+            <div class="bg-option" data-bg="zen" style="background-image: linear-gradient(135deg, #795548 0%, #8d6e63 100%);"></div>
+        </div>
+        <input type="file" id="customBackground" accept="image/*" style="margin: 10px 0;">
+        <div>
+            <button class="btn" onclick="applyBackground()">Áp dụng</button>
+            <button class="btn" onclick="closeBackgroundSelector()">Đóng</button>
+        </div>
+    </div>
 
-function toggleMuteRoom(){
-if(!u.isHost)return;
-roomMuted=!roomMuted;
-const btn=document.getElementById('muteRoomBtn');
-const status=document.getElementById('roomStatus');
-const voiceStatus=document.getElementById('voiceStatus');
-if(roomMuted){
-btn.textContent='🔊 Unmute Room';
-btn.classList.remove('btn-warning');
-btn.classList.add('btn-danger');
-status.textContent='🔇 Phòng đang mute';
-status.classList.add('muted');
-voiceStatus.textContent='🔇 Phòng đang mute';
-addMessage('system','🔇 Chủ phòng đã mute toàn bộ. Giơ tay để xin phát biểu.');
-}else{
-btn.textContent='🔇 Mute Room';
-btn.classList.remove('btn-danger');
-btn.classList.add('btn-warning');
-status.textContent='🔊 Phòng đang mở';
-status.classList.remove('muted');
-voiceStatus.textContent='🎤 Voice Chat: Đang mở';
-addMessage('system','🔊 Chủ phòng đã unmute phòng. Mọi người có thể nói tự do.');
-}
-}
+    <audio id="meditationAudio" loop></audio>
 
-function clearHands(){
-if(!u.isHost)return;
-raisedHands=[];
-document.querySelectorAll('.avatar').forEach(a=>a.classList.remove('raising-hand'));
-if(u.handRaised){
-u.handRaised=false;
-document.getElementById('handBtn').classList.remove('active');
-}
-updateRaisedHandsList();
-addMessage('system','✋ Chủ phòng đã clear tất cả raised hands');
-}
+    <script>
+        // Avatar data
+        const avatars = {
+            male: [
+                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23fdbcb4"/><circle cx="50" cy="35" r="18" fill="%23fdbcb4"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%234a90e2"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/></svg>',
+                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23d08b5b"/><circle cx="50" cy="35" r="18" fill="%23d08b5b"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%23e74c3c"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/></svg>',
+                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23f1c27d"/><circle cx="50" cy="35" r="18" fill="%23f1c27d"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%2327ae60"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/></svg>',
+                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23ffdbac"/><circle cx="50" cy="35" r="18" fill="%23ffdbac"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%23f39c12"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/></svg>',
+                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%238d5524"/><circle cx="50" cy="35" r="18" fill="%238d5524"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%239b59b6"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/></svg>',
+                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23c0392b"/><circle cx="50" cy="35" r="18" fill="%23c0392b"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%2334495e"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/></svg>',
+                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23f7dc6f"/><circle cx="50" cy="35" r="18" fill="%23f7dc6f"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%231abc9c"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/></svg>',
+                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23fadbd8"/><circle cx="50" cy="35" r="18" fill="%23fadbd8"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%232980b9"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/></svg>',
+                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23e8daef"/><circle cx="50" cy="35" r="18" fill="%23e8daef"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%23e67e22"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/></svg>',
+                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23a9dfbf"/><circle cx="50" cy="35" r="18" fill="%23a9dfbf"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%2316a085"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/></svg>'
+            ],
+            female: [
+                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23fdbcb4"/><circle cx="50" cy="35" r="18" fill="%23fdbcb4"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%23e91e63"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/><path d="M35 25 Q50 20 65 25" stroke="%23d2691e" stroke-width="3" fill="none"/></svg>',
+                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23d08b5b"/><circle cx="50" cy="35" r="18" fill="%23d08b5b"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%239c27b0"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/><path d="M35 25 Q50 20 65 25" stroke="%23000" stroke-width="3" fill="none"/></svg>',
+                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23f1c27d"/><circle cx="50" cy="35" r="18" fill="%23f1c27d"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%23ff5722"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/><path d="M35 25 Q50 20 65 25" stroke="%23ffd54f" stroke-width="3" fill="none"/></svg>',
+                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23ffdbac"/><circle cx="50" cy="35" r="18" fill="%23ffdbac"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%23673ab7"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/><path d="M35 25 Q50 20 65 25" stroke="%23ff6f00" stroke-width="3" fill="none"/></svg>',
+                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%238d5524"/><circle cx="50" cy="35" r="18" fill="%238d5524"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%23795548"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/><path d="M35 25 Q50 20 65 25" stroke="%236d4c41" stroke-width="3" fill="none"/></svg>',
+                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23c0392b"/><circle cx="50" cy="35" r="18" fill="%23c0392b"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%23607d8b"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/><path d="M35 25 Q50 20 65 25" stroke="%23000" stroke-width="3" fill="none"/></svg>',
+                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23f7dc6f"/><circle cx="50" cy="35" r="18" fill="%23f7dc6f"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%23388e3c"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/><path d="M35 25 Q50 20 65 25" stroke="%23ffb300" stroke-width="3" fill="none"/></svg>',
+                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23fadbd8"/><circle cx="50" cy="35" r="18" fill="%23fadbd8"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%23d32f2f"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/><path d="M35 25 Q50 20 65 25" stroke="%23ff8a65" stroke-width="3" fill="none"/></svg>',
+                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23e8daef"/><circle cx="50" cy="35" r="18" fill="%23e8daef"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%238e44ad"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/><path d="M35 25 Q50 20 65 25" stroke="%23d63031" stroke-width="3" fill="none"/></svg>',
+                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23a9dfbf"/><circle cx="50" cy="35" r="18" fill="%23a9dfbf"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%232c3e50"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/><path d="M35 25 Q50 20 65 25" stroke="%2327ae60" stroke-width="3" fill="none"/></svg>'
+            ]
+        };
 
-function updateRaisedHandsList(){
-const count=raisedHands.length;
-if(count>0){
-addMessage('system',`✋ Đang giơ tay (${count}): ${raisedHands.join(', ')}`);
-}
-}
+        // Game state
+        let gameState = {
+            characters: new Map(),
+            myCharacter: null,
+            isSitting: false,
+            currentMusic: null,
+            musicList: [],
+            selectedAvatar: 0,
+            userName: '',
+            meditationDays: 0,
+            joinDate: new Date(),
+            currentBackground: 'garden'
+        };
 
-function startTimer(){
-if(!t.i){
-t.i=setInterval(()=>{
-t.s++;
-if(t.s>=60){t.m++;t.s=0}
-document.getElementById('timer').textContent=String(t.m).padStart(2,'0')+':'+String(t.s).padStart(2,'0');
-},1000);
-addMessage('system','⏰ Bắt đầu đồng hồ thiền');
-}
-}
+        // Default meditation tracks
+        const defaultTracks = [
+            { name: '🌊 Sóng biển nhẹ nhàng', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmI3CjSW2e/Hci...' },
+            { name: '🎋 Tiếng chim rừng', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmI3CjSW2e/Hci...' },
+            { name: '☯ Chuông Tây Tạng', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmI3CjSW2e/Hci...' },
+            { name: '🧘 Âm Om thiền định', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmI3CjSW2e/Hci...' }
+        ];
 
-function resetTimer(){
-if(t.i)clearInterval(t.i);
-t.i=null;t.m=0;t.s=0;
-document.getElementById('timer').textContent='00:00';
-addMessage('system','⏰ Đã reset đồng hồ');
-}
+        // Initialize
+        function init() {
+            loadUserData();
+            setupAvatarSelector();
+            setupMusicList();
+            setupBackgroundOptions();
+            createMyCharacter();
+            addOtherCharacters();
+            
+            // Auto-save every 30 seconds
+            setInterval(saveUserData, 30000);
+        }
 
-function sendMessage(){
-const input=document.getElementById('messageInput');
-const msg=input.value.trim();
-if(msg){
-addMessage(u.name,msg,true);
-input.value='';
-setTimeout(()=>{
-const responses=['Cảm ơn bạn 🙏','Thật yên bình','Tôi cũng thư giãn','Hãy cùng tĩnh tâm','Host ơi cho em nói với','Em muốn chia sẻ cảm xúc'];
-const randomUser=users[Math.floor(Math.random()*users.length)];
-const randomResponse=responses[Math.floor(Math.random()*responses.length)];
-addMessage(randomUser,randomResponse);
-},1000+Math.random()*2000);
-}
-}
+        function loadUserData() {
+            const saved = localStorage.getItem('meditationRoom') || '{}';
+            const data = JSON.parse(saved);
+            
+            gameState.userName = data.userName || 'Thiền sinh mới';
+            gameState.selectedAvatar = data.selectedAvatar || 0;
+            gameState.joinDate = new Date(data.joinDate || Date.now());
+            gameState.meditationDays = data.meditationDays || 0;
+            gameState.currentBackground = data.currentBackground || 'garden';
+            
+            // Calculate achievement days
+            const daysDiff = Math.floor((Date.now() - gameState.joinDate.getTime()) / (1000 * 60 * 60 * 24));
+            gameState.meditationDays = Math.max(daysDiff, gameState.meditationDays);
+            
+            applyBackground();
+        }
 
-function addMessage(author,text,isOwn){
-const m=document.getElementById('messages');
-const d=document.createElement('div');
-const msgType=author==='system'?'system':isOwn?'own':'other';
-d.className=`message ${msgType}`;
-if(msgType==='system'){
-d.innerHTML=text;
-}else{
-d.innerHTML=`<div style="font-size:9px;opacity:.7;margin-bottom:2px">${author}</div><div>${text}</div>`;
-}
-m.appendChild(d);
-m.scrollTop=m.scrollHeight;
-if(m.children.length>40)m.removeChild(m.firstChild);
-}
+        function saveUserData() {
+            const data = {
+                userName: gameState.userName,
+                selectedAvatar: gameState.selectedAvatar,
+                joinDate: gameState.joinDate.toISOString(),
+                meditationDays: gameState.meditationDays,
+                currentBackground: gameState.currentBackground
+            };
+            localStorage.setItem('meditationRoom', JSON.stringify(data));
+        }
 
-document.getElementById('garden').addEventListener('click',e=>{
-if(e.target.id==='garden'||e.target.classList.contains('garden')){
-u.x=Math.max(10,Math.min(e.clientX-24,window.innerWidth-320));
-u.y=Math.max(10,Math.min(e.clientY-32,window.innerHeight-80));
-const a=document.getElementById('myAvatar');
-a.style.left=u.x+'px';
-a.style.top=u.y+'px';
-a.classList.add('walking');
-setTimeout(()=>a.classList.remove('walking'),800);
-}
-});
+        function setupAvatarSelector() {
+            const selector = document.getElementById('avatarSelector');
+            const allAvatars = [...avatars.male, ...avatars.female];
+            
+            allAvatars.forEach((avatar, index) => {
+                const img = document.createElement('img');
+                img.src = avatar;
+                img.className = 'avatar-option';
+                if (index === gameState.selectedAvatar) {
+                    img.classList.add('selected');
+                }
+                img.onclick = () => selectAvatar(index);
+                selector.appendChild(img);
+            });
+        }
 
-document.getElementById('username').addEventListener('input',e=>{
-u.name=e.target.value||'Thiền sinh mới';
-document.querySelector('#myAvatar .name').textContent=u.name+' (Host)';
-});
+        function selectAvatar(index) {
+            gameState.selectedAvatar = index;
+            document.querySelectorAll('.avatar-option').forEach((el, i) => {
+                el.classList.toggle('selected', i === index);
+            });
+            
+            if (gameState.myCharacter) {
+                const allAvatars = [...avatars.male, ...avatars.female];
+                gameState.myCharacter.querySelector('img').src = allAvatars[index];
+                document.getElementById('profileAvatar').src = allAvatars[index];
+            }
+        }
 
-// Simulate NPC activities
-setInterval(()=>{
-if(Math.random()<.15){
-const npc=users[Math.floor(Math.random()*users.length)];
-if(Math.random()<.3){
-// Random hand raising
-const avatar=document.getElementById(`npc_${users.indexOf(npc)}`);
-if(avatar&&!avatar.classList.contains('raising-hand')){
-avatar.classList.add('raising-hand');
-raisedHands.push(npc);
-addMessage('system',`✋ ${npc} giơ tay xin phát biểu`);
-updateRaisedHandsList();
-}
-}else{
-// Random messages
-const msgs=['Host ơi cho em nói','Em muốn chia sẻ','Vườn này yên bình','Em cần xin phát biểu'];
-const randomMsg=msgs[Math.floor(Math.random()*msgs.length)];
-addMessage(npc,randomMsg);
-}
-}
-},20000+Math.random()*25000);
+        function setupMusicList() {
+            gameState.musicList = [...defaultTracks];
+            updateMusicList();
+        }
 
-// Auto lower hands after time  
-setInterval(()=>{
-if(Math.random()<.2&&raisedHands.length>0){
-const randomHand=raisedHands[Math.floor(Math.random()*raisedHands.length)];
-if(randomHand!==u.name){
-const npcIndex=users.indexOf(randomHand);
-if(npcIndex>=0){
-const avatar=document.getElementById(`npc_${npcIndex}`);
-if(avatar)avatar.classList.remove('raising-hand');
-}
-raisedHands=raisedHands.filter(name=>name!==randomHand);
-addMessage('system',`✋ ${randomHand} đã hạ tay`);
-}
-}
-},30000);
+        function updateMusicList() {
+            const list = document.getElementById('musicList');
+            list.innerHTML = '';
+            
+            gameState.musicList.forEach((track, index) => {
+                const item = document.createElement('div');
+                item.className = 'music-item';
+                item.textContent = track.name;
+                item.onclick = () => playMusic(index);
+                if (gameState.currentMusic === index) {
+                    item.classList.add('playing');
+                }
+                list.appendChild(item);
+            });
+        }
 
-createAvatar();
-createNPCs();
-console.log('🌸 Vườn Thiền với Voice Management sẵn sàng!');
-</script>
+        function playMusic(index) {
+            const audio = document.getElementById('meditationAudio');
+            const track = gameState.musicList[index];
+            
+            if (gameState.currentMusic === index && !audio.paused) {
+                audio.pause();
+                gameState.currentMusic = null;
+                document.getElementById('currentTrack').textContent = 'Đã dừng';
+            } else {
+                audio.src = track.url;
+                audio.play().catch(e => {
+                    console.log('Cannot play audio:', e);
+                });
+                gameState.currentMusic = index;
+                document.getElementById('currentTrack').textContent = `Đang phát: ${track.name}`;
+            }
+            updateMusicList();
+        }
+
+        function addMusicFromUrl() {
+            const urlInput = document.getElementById('musicUrl');
+            const url = urlInput.value.trim();
+            
+            if (!url) return;
+            
+            // Extract video ID from YouTube URL
+            let audioUrl = url;
+            let trackName = 'Nhạc tùy chỉnh';
+            
+            if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                trackName = '🎵 YouTube Track';
+                // Note: In a real app, you'd need a service to convert YouTube to audio
+                alert('Tính năng YouTube đang phát triển. Vui lòng sử dụng file audio trực tiếp.');
+                return;
+            } else if (url.includes('soundcloud.com')) {
+                trackName = '🎧 SoundCloud Track';
+                alert('Tính năng SoundCloud đang phát triển. Vui lòng sử dụng file audio trực tiếp.');
+                return;
+            } else if (url.includes('spotify.com')) {
+                trackName = '🎶 Spotify Track';
+                alert('Tính năng Spotify đang phát triển. Vui lòng sử dụng file audio trực tiếp.');
+                return;
+            }
+            
+            gameState.musicList.push({ name: trackName, url: audioUrl });
+            updateMusicList();
+            urlInput.value = '';
+        }
+
+        function uploadMusic(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const audioUrl = e.target.result;
+                const trackName = `🎵 ${file.name}`;
+                gameState.musicList.push({ name: trackName, url: audioUrl });
+                updateMusicList();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function setVolume(value) {
+            const audio = document.getElementById('meditationAudio');
+            audio.volume = value / 100;
+        }
+
+        function createMyCharacter() {
+            const character = document.createElement('div');
+            character.className = 'character';
+            character.style.left = '50%';
+            character.style.top = '50%';
+            character.style.transform = 'translate(-50%, -50%)';
+            
+            const img = document.createElement('img');
+            const allAvatars = [...avatars.male, ...avatars.female];
+            img.src = allAvatars[gameState.selectedAvatar];
+            character.appendChild(img);
+            
+            character.onclick = () => showProfile();
+            
+            document.querySelector('.room-container').appendChild(character);
+            gameState.myCharacter = character;
+        }
+
+        function addOtherCharacters() {
+            // Add some demo characters
+            const demoCharacters = [
+                { x: 30, y: 30, avatar: 5, name: 'Minh An', stars: 2 },
+                { x: 70, y: 40, avatar: 12, name: 'Thu Hà', stars: 4 },
+                { x: 20, y: 70, avatar: 8, name: 'Đức Anh', stars: 1 },
+                { x: 80, y: 75, avatar: 15, name: 'Linh Chi', stars: 3 }
+            ];
+            
+            const allAvatars = [...avatars.male, ...avatars.female];
+            
+            demoCharacters.forEach((demo, index) => {
+                const character = document.createElement('div');
+                character.className = 'character';
+                character.style.left = demo.x + '%';
+                character.style.top = demo.y + '%';
+                
+                const img = document.createElement('img');
+                img.src = allAvatars[demo.avatar];
+                character.appendChild(img);
+                
+                character.onclick = () => showCharacterProfile(demo);
+                
+                document.querySelector('.room-container').appendChild(character);
+                gameState.characters.set(index, { element: character, data: demo });
+            });
+        }
+
+        function sitDown() {
+            if (!gameState.isSitting) {
+                gameState.isSitting = true;
+                gameState.myCharacter.classList.add('sitting');
+                gameState.myCharacter.style.pointerEvents = 'none';
+                
+                // Disable movement
+                gameState.myCharacter.onmousedown = null;
+                gameState.myCharacter.ontouchstart = null;
+            }
+        }
+
+        function standUp() {
+            if (gameState.isSitting) {
+                gameState.isSitting = false;
+                gameState.myCharacter.classList.remove('sitting');
+                gameState.myCharacter.style.pointerEvents = 'auto';
+                
+                // Enable movement
+                setupMovement();
+            }
+        }
+
+        function setupMovement() {
+            let isDragging = false;
+            let startX, startY, initialX, initialY;
+            
+            gameState.myCharacter.onmousedown = startDrag;
+            gameState.myCharacter.ontouchstart = startDrag;
+            
+            function startDrag(e) {
+                if (gameState.isSitting) return;
+                
+                isDragging = true;
+                const event = e.type === 'touchstart' ? e.touches[0] : e;
+                startX = event.clientX;
+                startY = event.clientY;
+                
+                const rect = gameState.myCharacter.getBoundingClientRect();
+                initialX = rect.left + rect.width / 2;
+                initialY = rect.top + rect.height / 2;
+                
+                document.onmousemove = drag;
+                document.ontouchmove = drag;
+                document.onmouseup = stopDrag;
+                document.ontouchend = stopDrag;
+                
+                e.preventDefault();
+            }
+            
+            function drag(e) {
+                if (!isDragging || gameState.isSitting) return;
+                
+                const event = e.type === 'touchmove' ? e.touches[0] : e;
+                const deltaX = event.clientX - startX;
+                const deltaY = event.clientY - startY;
+                
+                const newX = ((initialX + deltaX) / window.innerWidth) * 100;
+                const newY = ((initialY + deltaY) / window.innerHeight) * 100;
+                
+                // Keep character within bounds
+                const boundedX = Math.max(5, Math.min(95, newX));
+                const boundedY = Math.max(5, Math.min(95, newY));
+                
+                gameState.myCharacter.style.left = boundedX + '%';
+                gameState.myCharacter.style.top = boundedY + '%';
+                gameState.myCharacter.style.transform = 'translate(-50%, -50%)';
+                
+                e.preventDefault();
+            }
+            
+            function stopDrag() {
+                isDragging = false;
+                document.onmousemove = null;
+                document.ontouchmove = null;
+                document.onmouseup = null;
+                document.ontouchend = null;
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatMessage');
+            const message = input.value.trim();
+            
+            if (message && message.length <= 160) {
+                showChatBubble(gameState.myCharacter, message);
+                input.value = '';
+            }
+        }
+
+        function showChatBubble(character, message) {
+            // Remove existing bubble
+            const existingBubble = character.querySelector('.chat-bubble');
+            if (existingBubble) {
+                existingBubble.remove();
+            }
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'chat-bubble';
+            bubble.textContent = message;
+            character.appendChild(bubble);
+            
+            setTimeout(() => {
+                if (bubble.parentNode) {
+                    bubble.remove();
+                }
+            }, 3000);
+        }
+
+        function showProfile() {
+            const modal = document.getElementById('profileModal');
+            const allAvatars = [...avatars.male, ...avatars.female];
+            
+            document.getElementById('profileAvatar').src = allAvatars[gameState.selectedAvatar];
+            document.getElementById('userName').value = gameState.userName;
+            
+            // Update achievements
+            const weeks = Math.floor(gameState.meditationDays / 7);
+            const stars = Math.min(weeks, 10);
+            document.getElementById('achievementStars').textContent = '⭐'.repeat(stars) || '🌱';
+            
+            let achievementText = 'Thiền sinh mới bắt đầu';
+            if (weeks >= 1) achievementText = 'Kiên trì 1 tuần';
+            if (weeks >= 2) achievementText = 'Thiền sinh tận tâm';
+            if (weeks >= 4) achievementText = 'Thiền sư nhỏ';
+            if (weeks >= 8) achievementText = 'Bậc thầy thiền định';
+            if (weeks >= 16) achievementText = 'Enlightened Master';
+            
+            document.getElementById('achievementText').textContent = achievementText;
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeProfile() {
+            document.getElementById('profileModal').style.display = 'none';
+        }
+
+        function saveProfile() {
+            gameState.userName = document.getElementById('userName').value || 'Thiền sinh mới';
+            saveUserData();
+            closeProfile();
+        }
+
+        function showCharacterProfile(characterData) {
+            const modal = document.getElementById('characterModal');
+            const allAvatars = [...avatars.male, ...avatars.female];
+            
+            document.getElementById('characterAvatar').src = allAvatars[characterData.avatar];
+            document.getElementById('characterName').textContent = characterData.name;
+            document.getElementById('characterStars').textContent = '⭐'.repeat(characterData.stars);
+            
+            const bios = [
+                'Thiền sinh mới bắt đầu hành trình tìm hiểu bản thân.',
+                'Người yêu thiên nhiên và tìm kiếm sự bình an nội tâm.',
+                'Thiền sư trẻ với niềm đam mê chia sẻ trí tuệ.',
+                'Bậc thầy thiền định với nhiều năm kinh nghiệm.'
+            ];
+            
+            document.getElementById('characterBio').textContent = bios[Math.min(characterData.stars - 1, 3)];
+            modal.style.display = 'flex';
+        }
+
+        function closeCharacterModal() {
+            document.getElementById('characterModal').style.display = 'none';
+        }
+
+        function setupBackgroundOptions() {
+            const backgrounds = {
+                garden: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                forest: 'linear-gradient(135deg, #4caf50 0%, #8bc34a 100%)',
+                mountain: 'linear-gradient(135deg, #2196f3 0%, #21cbf3 100%)',
+                sunset: 'linear-gradient(135deg, #ff9800 0%, #f44336 100%)',
+                night: 'linear-gradient(135deg, #673ab7 0%, #3f51b5 100%)',
+                zen: 'linear-gradient(135deg, #795548 0%, #8d6e63 100%)'
+            };
+            
+            const options = document.querySelectorAll('.bg-option');
+            options.forEach(option => {
+                const bg = option.dataset.bg;
+                option.style.backgroundImage = backgrounds[bg];
+                option.onclick = () => {
+                    options.forEach(o => o.classList.remove('selected'));
+                    option.classList.add('selected');
+                    gameState.currentBackground = bg;
+                };
+            });
+            
+            // Custom background upload
+            document.getElementById('customBackground').onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        gameState.currentBackground = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+        }
+
+        function showBackgroundSelector() {
+            document.getElementById('backgroundSelector').style.display = 'block';
+        }
+
+        function closeBackgroundSelector() {
+            document.getElementById('backgroundSelector').style.display = 'none';
+        }
+
+        function applyBackground() {
+            const container = document.querySelector('.room-background');
+            
+            if (gameState.currentBackground.startsWith('data:')) {
+                // Custom uploaded image
+                container.style.backgroundImage = `url('${gameState.currentBackground}')`;
+            } else {
+                // Predefined backgrounds
+                const backgrounds = {
+                    garden: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    forest: 'linear-gradient(135deg, #4caf50 0%, #8bc34a 100%)',
+                    mountain: 'linear-gradient(135deg, #2196f3 0%, #21cbf3 100%)',
+                    sunset: 'linear-gradient(135deg, #ff9800 0%, #f44336 100%)',
+                    night: 'linear-gradient(135deg, #673ab7 0%, #3f51b5 100%)',
+                    zen: 'linear-gradient(135deg, #795548 0%, #8d6e63 100%)'
+                };
+                container.style.backgroundImage = backgrounds[gameState.currentBackground];
+            }
+            
+            saveUserData();
+            closeBackgroundSelector();
+        }
+
+        // Initialize on load
+        window.onload = init;
+        
+        // Handle resize
+        window.onresize = function() {
+            // Room automatically adjusts to viewport size via CSS
+        };
+    </script>
 </body>
 </html>
