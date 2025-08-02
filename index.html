@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meditation Room V3</title>
+    <title>Meditation Room V4</title>
     <style>
         * {
             margin: 0;
@@ -190,6 +190,17 @@
             color: white;
         }
 
+        .btn.host-only {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: white;
+            border: 2px solid gold;
+        }
+
+        .btn.host-only:hover {
+            background: linear-gradient(135deg, #ff5252, #ffb74d);
+            transform: translateY(-2px) scale(1.05);
+        }
+
         .music-controls {
             position: fixed;
             bottom: 20px;
@@ -200,7 +211,7 @@
             border-radius: 15px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             backdrop-filter: blur(10px);
-            max-width: 300px;
+            max-width: 350px;
         }
 
         .music-list {
@@ -217,6 +228,9 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .music-item:hover {
@@ -227,6 +241,75 @@
         .music-item.playing {
             background: #4caf50;
             color: white;
+        }
+
+        .music-item.youtube {
+            background: linear-gradient(135deg, #ff0000, #ff4444);
+            color: white;
+            border-left: 4px solid #cc0000;
+        }
+
+        .music-item.youtube:hover {
+            background: linear-gradient(135deg, #cc0000, #ff0000);
+        }
+
+        .youtube-controls {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .youtube-play-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .youtube-play-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+
+        .youtube-embed {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 200;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: none;
+        }
+
+        .youtube-embed iframe {
+            border-radius: 10px;
+        }
+
+        .host-indicator {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #333;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-left: 5px;
+            border: 1px solid #ffc107;
+            animation: hostGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes hostGlow {
+            0%, 100% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
         }
 
         .chat-input {
@@ -415,6 +498,8 @@
             border-radius: 10px;
             font-size: 10px;
             white-space: nowrap;
+            display: flex;
+            align-items: center;
         }
 
         .move-indicator {
@@ -441,6 +526,13 @@
             }
         }
 
+        @keyframes fall {
+            to {
+                transform: translateY(calc(100vh + 50px)) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
         @media (max-width: 768px) {
             .controls {
                 flex-direction: column;
@@ -453,7 +545,7 @@
             }
             
             .music-controls {
-                max-width: 250px;
+                max-width: 280px;
                 padding: 10px;
             }
             
@@ -461,6 +553,22 @@
                 width: 180px;
                 padding: 10px 15px;
             }
+
+            .youtube-embed {
+                width: 90%;
+                padding: 15px;
+            }
+        }
+
+        .youtube-player-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 199;
+            display: none;
         }
     </style>
 </head>
@@ -473,6 +581,7 @@
             <button class="btn" id="sitBtn" onclick="sitDown()">🧘 NGỒI THIỀN</button>
             <button class="btn" onclick="showProfile()">👤 Profile</button>
             <button class="btn" onclick="showBackgroundSelector()">🎨 Đổi nền</button>
+            <button class="btn host-only" id="hostBtn" onclick="toggleHost()">👑 HOST</button>
         </div>
 
         <div class="music-controls">
@@ -482,10 +591,12 @@
                 <label>Âm lượng: </label>
                 <input type="range" id="volumeSlider" min="0" max="100" value="50" onchange="setVolume(this.value)">
             </div>
-            <input type="text" id="musicUrl" placeholder="Dán URL YouTube/SoundCloud/Spotify" class="url-input">
-            <button class="btn" onclick="addMusicFromUrl()">Thêm nhạc</button>
-            <input type="file" id="musicUpload" accept="audio/*" style="display:none" onchange="uploadMusic(event)">
-            <button class="btn" onclick="document.getElementById('musicUpload').click()">Upload nhạc</button>
+            <div id="hostMusicControls" class="hidden">
+                <input type="text" id="musicUrl" placeholder="Dán URL YouTube hoặc âm thanh trực tiếp" class="url-input">
+                <button class="btn" onclick="addMusicFromUrl()">➕ Thêm nhạc</button>
+                <input type="file" id="musicUpload" accept="audio/*" style="display:none" onchange="uploadMusic(event)">
+                <button class="btn" onclick="document.getElementById('musicUpload').click()">📁 Upload nhạc</button>
+            </div>
             <div class="music-list" id="musicList"></div>
         </div>
 
@@ -493,6 +604,18 @@
             <input type="text" id="chatMessage" placeholder="Nhập tin nhắn..." maxlength="160" onkeypress="if(event.key==='Enter') sendMessage()">
             <button class="btn" onclick="sendMessage()">💬 Gửi</button>
         </div>
+    </div>
+
+    <!-- YouTube Player Overlay -->
+    <div class="youtube-player-overlay" id="youtubeOverlay" onclick="closeYouTubePlayer()"></div>
+    
+    <!-- YouTube Embed -->
+    <div class="youtube-embed" id="youtubeEmbed">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="margin: 0;">🎵 YouTube Player</h3>
+            <button class="btn" onclick="closeYouTubePlayer()" style="padding: 8px 12px;">❌ Đóng</button>
+        </div>
+        <iframe id="youtubeFrame" width="400" height="225" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
 
     <!-- Profile Modal -->
@@ -573,1019 +696,3 @@
         <input type="file" id="customBackground" accept="image/*" style="margin: 10px 0;">
         <div>
             <button class="btn" onclick="applyBackground()">✅ Áp dụng</button>
-            <button class="btn" onclick="closeBackgroundSelector()">❌ Đóng</button>
-        </div>
-    </div>
-
-    <audio id="meditationAudio" loop></audio>
-
-    <script>
-        // Character customization options
-        const customizationOptions = {
-            shirts: [
-                { color: '#4a90e2', pattern: 'solid' },
-                { color: '#e74c3c', pattern: 'solid' },
-                { color: '#27ae60', pattern: 'solid' },
-                { color: '#f39c12', pattern: 'solid' },
-                { color: '#9b59b6', pattern: 'solid' }
-            ],
-            pants: [
-                { color: '#2c3e50', pattern: 'solid' },
-                { color: '#34495e', pattern: 'solid' },
-                { color: '#8b4513', pattern: 'solid' },
-                { color: '#556b2f', pattern: 'solid' },
-                { color: '#483d8b', pattern: 'solid' }
-            ],
-            shoes: [
-                { color: '#654321', type: 'boots' },
-                { color: '#2c3e50', type: 'sneakers' },
-                { color: '#8b4513', type: 'sandals' },
-                { color: '#000000', type: 'formal' },
-                { color: '#ffffff', type: 'canvas' }
-            ],
-            hair: [
-                { color: '#6b4423', style: 'short' },
-                { color: '#000000', style: 'long' },
-                { color: '#d2691e', style: 'wavy' },
-                { color: '#ffd54f', style: 'curly' },
-                { color: '#8b4513', style: 'braided' }
-            ],
-            skin: [
-                { tone: '#fdbcb4', name: 'Light' },
-                { tone: '#f1c27d', name: 'Medium' },
-                { tone: '#d08b5b', name: 'Tan' },
-                { tone: '#8d5524', name: 'Brown' },
-                { tone: '#654321', name: 'Dark' }
-            ]
-        };
-
-        // Game state
-        let gameState = {
-            characters: new Map(),
-            myCharacter: null,
-            isMoving: false,
-            isSitting: false,
-            currentMusic: null,
-            musicList: [],
-            userName: '',
-            meditationDays: 0,
-            joinDate: new Date(),
-            currentBackground: 'garden',
-            customization: {
-                shirt: 0,
-                pants: 0,
-                shoes: 0,
-                hair: 0,
-                skin: 0
-            },
-            moveTarget: null
-        };
-
-        // Default meditation tracks
-        const defaultTracks = [
-            { name: '🌊 Sóng biển nhẹ nhàng', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmI3CjSW2e/Hci...' },
-            { name: '🎋 Tiếng chim rừng', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmI3CjSW2e/Hci...' },
-            { name: '☯ Chuông Tây Tạng', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmI3CjSW2e/Hci...' },
-            { name: '🧘 Âm Om thiền định', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmI3CjSW2e/Hci...' }
-        ];
-
-        // Initialize
-        function init() {
-            loadUserData();
-            setupCustomizationOptions();
-            setupMusicList();
-            setupBackgroundOptions();
-            createMyCharacter();
-            addOtherCharacters();
-            setupRoomInteraction();
-            updateButtonStates();
-            
-            // Auto-save every 30 seconds
-            setInterval(saveUserData, 30000);
-        }
-
-        function loadUserData() {
-            const saved = localStorage.getItem('meditationRoomV3') || '{}';
-            const data = JSON.parse(saved);
-            
-            gameState.userName = data.userName || 'Thiền sinh mới';
-            gameState.joinDate = new Date(data.joinDate || Date.now());
-            gameState.meditationDays = data.meditationDays || 0;
-            gameState.currentBackground = data.currentBackground || 'garden';
-            gameState.customization = data.customization || {
-                shirt: 0, pants: 0, shoes: 0, hair: 0, skin: 0
-            };
-            
-            // Calculate achievement days
-            const daysDiff = Math.floor((Date.now() - gameState.joinDate.getTime()) / (1000 * 60 * 60 * 24));
-            gameState.meditationDays = Math.max(daysDiff, gameState.meditationDays);
-            
-            applyBackground();
-        }
-
-        function saveUserData() {
-            const data = {
-                userName: gameState.userName,
-                joinDate: gameState.joinDate.toISOString(),
-                meditationDays: gameState.meditationDays,
-                currentBackground: gameState.currentBackground,
-                customization: gameState.customization
-            };
-            localStorage.setItem('meditationRoomV3', JSON.stringify(data));
-        }
-
-        function setupCustomizationOptions() {
-            // Setup shirt options
-            const shirtContainer = document.getElementById('shirtOptions');
-            customizationOptions.shirts.forEach((shirt, index) => {
-                const option = document.createElement('div');
-                option.className = 'option-item';
-                option.style.backgroundColor = shirt.color;
-                option.onclick = () => selectCustomization('shirt', index);
-                if (index === gameState.customization.shirt) {
-                    option.classList.add('selected');
-                }
-                shirtContainer.appendChild(option);
-            });
-
-            // Setup pants options
-            const pantsContainer = document.getElementById('pantsOptions');
-            customizationOptions.pants.forEach((pants, index) => {
-                const option = document.createElement('div');
-                option.className = 'option-item';
-                option.style.backgroundColor = pants.color;
-                option.onclick = () => selectCustomization('pants', index);
-                if (index === gameState.customization.pants) {
-                    option.classList.add('selected');
-                }
-                pantsContainer.appendChild(option);
-            });
-
-            // Setup shoes options
-            const shoesContainer = document.getElementById('shoesOptions');
-            customizationOptions.shoes.forEach((shoes, index) => {
-                const option = document.createElement('div');
-                option.className = 'option-item';
-                option.style.backgroundColor = shoes.color;
-                option.onclick = () => selectCustomization('shoes', index);
-                if (index === gameState.customization.shoes) {
-                    option.classList.add('selected');
-                }
-                shoesContainer.appendChild(option);
-            });
-
-            // Setup hair options
-            const hairContainer = document.getElementById('hairOptions');
-            customizationOptions.hair.forEach((hair, index) => {
-                const option = document.createElement('div');
-                option.className = 'option-item';
-                option.style.backgroundColor = hair.color;
-                option.onclick = () => selectCustomization('hair', index);
-                if (index === gameState.customization.hair) {
-                    option.classList.add('selected');
-                }
-                hairContainer.appendChild(option);
-            });
-
-            // Setup skin options
-            const skinContainer = document.getElementById('skinOptions');
-            customizationOptions.skin.forEach((skin, index) => {
-                const option = document.createElement('div');
-                option.className = 'option-item';
-                option.style.backgroundColor = skin.tone;
-                option.onclick = () => selectCustomization('skin', index);
-                if (index === gameState.customization.skin) {
-                    option.classList.add('selected');
-                }
-                skinContainer.appendChild(option);
-            });
-        }
-
-        function selectCustomization(type, index) {
-            gameState.customization[type] = index;
-            
-            // Update UI
-            document.querySelectorAll(`#${type}Options .option-item`).forEach((el, i) => {
-                el.classList.toggle('selected', i === index);
-            });
-            
-            // Update character appearance
-            updateCharacterAppearance();
-        }
-
-        function updateCharacterAppearance() {
-            if (!gameState.myCharacter) return;
-            
-            const customization = gameState.customization;
-            const shirt = customizationOptions.shirts[customization.shirt];
-            const pants = customizationOptions.pants[customization.pants];
-            const shoes = customizationOptions.shoes[customization.shoes];
-            const hair = customizationOptions.hair[customization.hair];
-            const skin = customizationOptions.skin[customization.skin];
-            
-            // Generate custom SVG based on current state
-            let svgContent;
-            
-            if (gameState.isSitting) {
-                svgContent = generateSittingCharacterSVG(skin, shirt, pants, shoes, hair);
-                gameState.myCharacter.className = 'character sitting meditating';
-            } else {
-                svgContent = generateStandingCharacterSVG(skin, shirt, pants, shoes, hair);
-                gameState.myCharacter.className = 'character standing';
-            }
-            
-            gameState.myCharacter.querySelector('.character-body').style.backgroundImage = `url('data:image/svg+xml,${encodeURIComponent(svgContent)}')`;
-            
-            // Update profile avatar
-            const profileAvatar = document.getElementById('profileAvatar');
-            if (profileAvatar) {
-                profileAvatar.style.backgroundImage = `url('data:image/svg+xml,${encodeURIComponent(svgContent)}')`;
-            }
-        }
-
-        function generateStandingCharacterSVG(skin, shirt, pants, shoes, hair) {
-            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 96">
-                <defs>
-                    <radialGradient id="aura" cx="50%" cy="50%" r="60%">
-                        <stop offset="0%" style="stop-color:rgba(255,215,0,0);stop-opacity:0" />
-                        <stop offset="100%" style="stop-color:rgba(255,215,0,0);stop-opacity:0" />
-                    </radialGradient>
-                </defs>
-                <!-- Shadow -->
-                <ellipse cx="32" cy="90" rx="15" ry="6" fill="rgba(0,0,0,0.2)"/>
-                
-                <!-- Head -->
-                <circle cx="32" cy="20" r="12" fill="${skin.tone}" stroke="#e8a48a" stroke-width="1"/>
-                
-                <!-- Eyes -->
-                <ellipse cx="29" cy="18" rx="1.5" ry="2" fill="#333"/>
-                <ellipse cx="35" cy="18" rx="1.5" ry="2" fill="#333"/>
-                
-                <!-- Nose -->
-                <ellipse cx="32" cy="22" rx="2" ry="1" fill="#d2a679"/>
-                
-                <!-- Hair -->
-                <path d="M20 15 Q32 8 44 15 Q32 12 20 15" fill="${hair.color}"/>
-                
-                <!-- Shirt -->
-                <rect x="26" y="32" width="12" height="20" rx="6" fill="${shirt.color}"/>
-                
-                <!-- Pants -->
-                <rect x="24" y="52" width="16" height="24" rx="8" fill="${pants.color}"/>
-                
-                <!-- Arms -->
-                <circle cx="22" cy="38" r="3" fill="${skin.tone}"/>
-                <circle cx="42" cy="38" r="3" fill="${skin.tone}"/>
-                
-                <!-- Legs -->
-                <ellipse cx="28" cy="80" rx="4" ry="8" fill="${skin.tone}"/>
-                <ellipse cx="36" cy="80" rx="4" ry="8" fill="${skin.tone}"/>
-                
-                <!-- Shoes -->
-                <ellipse cx="26" cy="88" rx="6" ry="4" fill="${shoes.color}"/>
-                <ellipse cx="38" cy="88" rx="6" ry="4" fill="${shoes.color}"/>
-            </svg>`;
-        }
-
-        function generateSittingCharacterSVG(skin, shirt, pants, shoes, hair) {
-            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 96">
-                <defs>
-                    <radialGradient id="aura" cx="50%" cy="50%" r="80%">
-                        <stop offset="0%" style="stop-color:rgba(255,215,0,0.3);stop-opacity:0.6" />
-                        <stop offset="100%" style="stop-color:rgba(255,215,0,0);stop-opacity:0" />
-                    </radialGradient>
-                </defs>
-                
-                <!-- Meditation Aura -->
-                <circle cx="32" cy="48" r="45" fill="url(#aura)"/>
-                
-                <!-- Shadow -->
-                <ellipse cx="32" cy="85" rx="20" ry="10" fill="rgba(0,0,0,0.2)"/>
-                
-                <!-- Head -->
-                <circle cx="32" cy="25" r="12" fill="${skin.tone}" stroke="#e8a48a" stroke-width="1"/>
-                
-                <!-- Closed Eyes (meditation) -->
-                <ellipse cx="29" cy="23" rx="1" ry="0.5" fill="#333"/>
-                <ellipse cx="35" cy="23" rx="1" ry="0.5" fill="#333"/>
-                
-                <!-- Peaceful smile -->
-                <path d="M28 26 Q32 28 36 26" stroke="#333" stroke-width="1" fill="none"/>
-                
-                <!-- Hair -->
-                <path d="M20 18 Q32 12 44 18 Q32 15 20 18" fill="${hair.color}"/>
-                
-                <!-- Shirt -->
-                <rect x="26" y="37" width="12" height="18" rx="6" fill="${shirt.color}"/>
-                
-                <!-- Sitting position - lotus pose -->
-                <circle cx="32" cy="65" r="8" fill="${pants.color}"/>
-                
-                <!-- Meditation hands -->
-                <circle cx="20" cy="50" r="4" fill="${skin.tone}"/>
-                <circle cx="44" cy="50" r="4" fill="${skin.tone}"/>
-                
-                <!-- Crossed legs -->
-                <ellipse cx="24" cy="72" rx="6" ry="4" fill="${pants.color}"/>
-                <ellipse cx="40" cy="72" rx="6" ry="4" fill="${pants.color}"/>
-                
-                <!-- Prayer hands -->
-                <circle cx="28" cy="48" r="3" fill="${skin.tone}"/>
-                <circle cx="36" cy="48" r="3" fill="${skin.tone}"/>
-                
-                <!-- Feet -->
-                <ellipse cx="22" cy="76" rx="4" ry="3" fill="${shoes.color}"/>
-                <ellipse cx="42" cy="76" rx="4" ry="3" fill="${shoes.color}"/>
-            </svg>`;
-        }
-
-        function setupMusicList() {
-            gameState.musicList = [...defaultTracks];
-            updateMusicList();
-        }
-
-        function updateMusicList() {
-            const list = document.getElementById('musicList');
-            list.innerHTML = '';
-            
-            gameState.musicList.forEach((track, index) => {
-                const item = document.createElement('div');
-                item.className = 'music-item';
-                item.textContent = track.name;
-                item.onclick = () => playMusic(index);
-                if (gameState.currentMusic === index) {
-                    item.classList.add('playing');
-                }
-                list.appendChild(item);
-            });
-        }
-
-        function playMusic(index) {
-            const audio = document.getElementById('meditationAudio');
-            const track = gameState.musicList[index];
-            
-            if (gameState.currentMusic === index && !audio.paused) {
-                audio.pause();
-                gameState.currentMusic = null;
-                document.getElementById('currentTrack').textContent = 'Đã dừng';
-            } else {
-                audio.src = track.url;
-                audio.play().catch(e => {
-                    console.log('Cannot play audio:', e);
-                });
-                gameState.currentMusic = index;
-                document.getElementById('currentTrack').textContent = `Đang phát: ${track.name}`;
-            }
-            updateMusicList();
-        }
-
-        function addMusicFromUrl() {
-            const urlInput = document.getElementById('musicUrl');
-            const url = urlInput.value.trim();
-            
-            if (!url) return;
-            
-            // Extract video ID from YouTube URL
-            let audioUrl = url;
-            let trackName = 'Nhạc tùy chỉnh';
-            
-            if (url.includes('youtube.com') || url.includes('youtu.be')) {
-                trackName = '🎵 YouTube Track';
-                alert('Tính năng YouTube đang phát triển. Vui lòng sử dụng file audio trực tiếp.');
-                return;
-            } else if (url.includes('soundcloud.com')) {
-                trackName = '🎧 SoundCloud Track';
-                alert('Tính năng SoundCloud đang phát triển. Vui lòng sử dụng file audio trực tiếp.');
-                return;
-            } else if (url.includes('spotify.com')) {
-                trackName = '🎶 Spotify Track';
-                alert('Tính năng Spotify đang phát triển. Vui lòng sử dụng file audio trực tiếp.');
-                return;
-            }
-            
-            gameState.musicList.push({ name: trackName, url: audioUrl });
-            updateMusicList();
-            urlInput.value = '';
-        }
-
-        function uploadMusic(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const audioUrl = e.target.result;
-                const trackName = `🎵 ${file.name}`;
-                gameState.musicList.push({ name: trackName, url: audioUrl });
-                updateMusicList();
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function setVolume(value) {
-            const audio = document.getElementById('meditationAudio');
-            audio.volume = value / 100;
-        }
-
-        function createMyCharacter() {
-            const character = document.createElement('div');
-            character.className = 'character standing';
-            character.style.left = '50%';
-            character.style.top = '50%';
-            character.style.transform = 'translate(-50%, -50%)';
-            
-            const body = document.createElement('div');
-            body.className = 'character-body';
-            character.appendChild(body);
-            
-            // Add status indicator
-            const status = document.createElement('div');
-            status.className = 'character-status';
-            status.textContent = gameState.userName;
-            character.appendChild(status);
-            
-            character.onclick = () => showProfile();
-            
-            document.querySelector('.room-container').appendChild(character);
-            gameState.myCharacter = character;
-            
-            updateCharacterAppearance();
-        }
-
-        function addOtherCharacters() {
-            // Add some demo characters
-            const demoCharacters = [
-                { x: 20, y: 30, name: 'Minh An', stars: 2, customization: {shirt: 1, pants: 1, shoes: 1, hair: 1, skin: 1} },
-                { x: 80, y: 25, name: 'Thu Hà', stars: 4, customization: {shirt: 2, pants: 2, shoes: 2, hair: 2, skin: 2} },
-                { x: 15, y: 70, name: 'Đức Anh', stars: 1, customization: {shirt: 3, pants: 3, shoes: 3, hair: 3, skin: 3} },
-                { x: 85, y: 75, name: 'Linh Chi', stars: 3, customization: {shirt: 4, pants: 4, shoes: 4, hair: 4, skin: 4} }
-            ];
-            
-            demoCharacters.forEach((demo, index) => {
-                const character = document.createElement('div');
-                character.className = Math.random() > 0.5 ? 'character sitting meditating' : 'character standing';
-                character.style.left = demo.x + '%';
-                character.style.top = demo.y + '%';
-                
-                const body = document.createElement('div');
-                body.className = 'character-body';
-                character.appendChild(body);
-                
-                // Add status indicator
-                const status = document.createElement('div');
-                status.className = 'character-status';
-                status.textContent = demo.name;
-                character.appendChild(status);
-                
-                // Generate character appearance
-                const skin = customizationOptions.skin[demo.customization.skin];
-                const shirt = customizationOptions.shirts[demo.customization.shirt];
-                const pants = customizationOptions.pants[demo.customization.pants];
-                const shoes = customizationOptions.shoes[demo.customization.shoes];
-                const hair = customizationOptions.hair[demo.customization.hair];
-                
-                let svgContent;
-                if (character.classList.contains('sitting')) {
-                    svgContent = generateSittingCharacterSVG(skin, shirt, pants, shoes, hair);
-                } else {
-                    svgContent = generateStandingCharacterSVG(skin, shirt, pants, shoes, hair);
-                }
-                
-                body.style.backgroundImage = `url('data:image/svg+xml,${encodeURIComponent(svgContent)}')`;
-                
-                character.onclick = () => showCharacterProfile(demo);
-                
-                document.querySelector('.room-container').appendChild(character);
-                gameState.characters.set(index, { element: character, data: demo });
-                
-                // Random chat for demo characters
-                if (Math.random() > 0.7) {
-                    setTimeout(() => {
-                        const messages = ['Om...', 'Bình an...', '🕉️', 'Thiền định...', 'Hạnh phúc'];
-                        showChatBubble(character, messages[Math.floor(Math.random() * messages.length)]);
-                    }, Math.random() * 5000);
-                }
-            });
-        }
-
-        function setupRoomInteraction() {
-            const roomContainer = document.getElementById('roomContainer');
-            
-            roomContainer.addEventListener('click', (e) => {
-                if (gameState.isSitting) return;
-                
-                // Don't move if clicking on character or UI elements
-                if (e.target.closest('.character') || e.target.closest('.controls') || 
-                    e.target.closest('.music-controls') || e.target.closest('.chat-input')) {
-                    return;
-                }
-                
-                const rect = roomContainer.getBoundingClientRect();
-                const x = ((e.clientX - rect.left) / rect.width) * 100;
-                const y = ((e.clientY - rect.top) / rect.height) * 100;
-                
-                moveCharacterTo(x, y);
-                showMoveIndicator(e.clientX - rect.left, e.clientY - rect.top);
-            });
-        }
-
-        function moveCharacterTo(x, y) {
-            if (!gameState.myCharacter || gameState.isSitting) return;
-            
-            // Clamp positions to room boundaries
-            x = Math.max(5, Math.min(95, x));
-            y = Math.max(5, Math.min(95, y));
-            
-            gameState.moveTarget = { x, y };
-            gameState.isMoving = true;
-            gameState.myCharacter.classList.add('walking');
-            
-            // Animate movement
-            gameState.myCharacter.style.transition = 'left 1s ease-out, top 1s ease-out';
-            gameState.myCharacter.style.left = x + '%';
-            gameState.myCharacter.style.top = y + '%';
-            
-            // Stop walking animation after movement
-            setTimeout(() => {
-                gameState.isMoving = false;
-                gameState.myCharacter.classList.remove('walking');
-                gameState.myCharacter.style.transition = '';
-                gameState.moveTarget = null;
-            }, 1000);
-        }
-
-        function showMoveIndicator(x, y) {
-            const indicator = document.createElement('div');
-            indicator.className = 'move-indicator';
-            indicator.style.left = (x - 10) + 'px';
-            indicator.style.top = (y - 10) + 'px';
-            
-            document.querySelector('.room-container').appendChild(indicator);
-            
-            setTimeout(() => {
-                if (indicator.parentNode) {
-                    indicator.remove();
-                }
-            }, 1000);
-        }
-
-        function sitDown() {
-            if (!gameState.isSitting) {
-                gameState.isSitting = true;
-                gameState.myCharacter.classList.remove('standing', 'walking');
-                gameState.myCharacter.classList.add('sitting', 'meditating');
-                updateCharacterAppearance();
-                updateButtonStates();
-                
-                // Increment meditation counter
-                gameState.meditationDays++;
-                saveUserData();
-            }
-        }
-
-        function standUp() {
-            if (gameState.isSitting) {
-                gameState.isSitting = false;
-                gameState.myCharacter.classList.remove('sitting', 'meditating');
-                gameState.myCharacter.classList.add('standing');
-                updateCharacterAppearance();
-                updateButtonStates();
-            }
-        }
-
-        function updateButtonStates() {
-            const standBtn = document.getElementById('standBtn');
-            const sitBtn = document.getElementById('sitBtn');
-            
-            if (gameState.isSitting) {
-                standBtn.classList.add('active');
-                sitBtn.classList.remove('active');
-            } else {
-                standBtn.classList.remove('active');
-                sitBtn.classList.add('active');
-            }
-        }
-
-        function sendMessage() {
-            const input = document.getElementById('chatMessage');
-            const message = input.value.trim();
-            
-            if (message && message.length <= 160) {
-                showChatBubble(gameState.myCharacter, message);
-                input.value = '';
-            }
-        }
-
-        function showChatBubble(character, message) {
-            // Remove existing bubble
-            const existingBubble = character.querySelector('.chat-bubble');
-            if (existingBubble) {
-                existingBubble.remove();
-            }
-            
-            const bubble = document.createElement('div');
-            bubble.className = 'chat-bubble';
-            bubble.textContent = message;
-            
-            // Calculate width based on message length but respect character width
-            const charWidth = character.offsetWidth;
-            bubble.style.maxWidth = charWidth + 'px';
-            bubble.style.minWidth = charWidth + 'px';
-            
-            character.appendChild(bubble);
-            
-            setTimeout(() => {
-                if (bubble.parentNode) {
-                    bubble.remove();
-                }
-            }, 5000);
-        }
-
-        function showProfile() {
-            const modal = document.getElementById('profileModal');
-            
-            document.getElementById('userName').value = gameState.userName;
-            
-            // Update achievements
-            const weeks = Math.floor(gameState.meditationDays / 7);
-            const stars = Math.min(weeks, 10);
-            document.getElementById('achievementStars').textContent = '⭐'.repeat(stars) || '🌱';
-            
-            let achievementText = 'Thiền sinh mới bắt đầu';
-            if (weeks >= 1) achievementText = 'Kiên trì 1 tuần';
-            if (weeks >= 2) achievementText = 'Thiền sinh tận tâm';
-            if (weeks >= 4) achievementText = 'Thiền sư nhỏ';
-            if (weeks >= 8) achievementText = 'Bậc thầy thiền định';
-            if (weeks >= 16) achievementText = 'Enlightened Master';
-            
-            document.getElementById('achievementText').textContent = achievementText;
-            
-            // Update profile avatar
-            updateCharacterAppearance();
-            
-            modal.style.display = 'flex';
-        }
-
-        function closeProfile() {
-            document.getElementById('profileModal').style.display = 'none';
-        }
-
-        function saveProfile() {
-            gameState.userName = document.getElementById('userName').value || 'Thiền sinh mới';
-            
-            // Update character status
-            if (gameState.myCharacter) {
-                const status = gameState.myCharacter.querySelector('.character-status');
-                if (status) {
-                    status.textContent = gameState.userName;
-                }
-            }
-            
-            saveUserData();
-            closeProfile();
-        }
-
-        function showCharacterProfile(characterData) {
-            const modal = document.getElementById('characterModal');
-            
-            // Generate character appearance for profile
-            const skin = customizationOptions.skin[characterData.customization.skin];
-            const shirt = customizationOptions.shirts[characterData.customization.shirt];
-            const pants = customizationOptions.pants[characterData.customization.pants];
-            const shoes = customizationOptions.shoes[characterData.customization.shoes];
-            const hair = customizationOptions.hair[characterData.customization.hair];
-            
-            const svgContent = generateStandingCharacterSVG(skin, shirt, pants, shoes, hair);
-            document.getElementById('characterAvatar').style.backgroundImage = `url('data:image/svg+xml,${encodeURIComponent(svgContent)}')`;
-            
-            document.getElementById('characterName').textContent = characterData.name;
-            document.getElementById('characterStars').textContent = '⭐'.repeat(characterData.stars);
-            
-            const bios = [
-                'Thiền sinh mới bắt đầu hành trình tìm hiểu bản thân.',
-                'Người yêu thiên nhiên và tìm kiếm sự bình an nội tâm.',
-                'Thiền sư trẻ với niềm đam mê chia sẻ trí tuệ.',
-                'Bậc thầy thiền định với nhiều năm kinh nghiệm.'
-            ];
-            
-            document.getElementById('characterBio').textContent = bios[Math.min(characterData.stars - 1, 3)];
-            modal.style.display = 'flex';
-        }
-
-        function closeCharacterModal() {
-            document.getElementById('characterModal').style.display = 'none';
-        }
-
-        function setupBackgroundOptions() {
-            const backgrounds = {
-                garden: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                forest: 'linear-gradient(135deg, #4caf50 0%, #8bc34a 100%)',
-                mountain: 'linear-gradient(135deg, #2196f3 0%, #21cbf3 100%)',
-                sunset: 'linear-gradient(135deg, #ff9800 0%, #f44336 100%)',
-                night: 'linear-gradient(135deg, #673ab7 0%, #3f51b5 100%)',
-                zen: 'linear-gradient(135deg, #795548 0%, #8d6e63 100%)'
-            };
-            
-            const options = document.querySelectorAll('.bg-option');
-            options.forEach(option => {
-                const bg = option.dataset.bg;
-                option.style.backgroundImage = backgrounds[bg];
-                option.onclick = () => {
-                    options.forEach(o => o.classList.remove('selected'));
-                    option.classList.add('selected');
-                    gameState.currentBackground = bg;
-                };
-            });
-            
-            // Custom background upload
-            document.getElementById('customBackground').onchange = function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        gameState.currentBackground = event.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            };
-        }
-
-        function showBackgroundSelector() {
-            document.getElementById('backgroundSelector').style.display = 'block';
-        }
-
-        function closeBackgroundSelector() {
-            document.getElementById('backgroundSelector').style.display = 'none';
-        }
-
-        function applyBackground() {
-            const container = document.querySelector('.room-background');
-            
-            if (gameState.currentBackground.startsWith('data:')) {
-                // Custom uploaded image
-                container.style.backgroundImage = `url('${gameState.currentBackground}')`;
-            } else {
-                // Predefined backgrounds
-                const backgrounds = {
-                    garden: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    forest: 'linear-gradient(135deg, #4caf50 0%, #8bc34a 100%)',
-                    mountain: 'linear-gradient(135deg, #2196f3 0%, #21cbf3 100%)',
-                    sunset: 'linear-gradient(135deg, #ff9800 0%, #f44336 100%)',
-                    night: 'linear-gradient(135deg, #673ab7 0%, #3f51b5 100%)',
-                    zen: 'linear-gradient(135deg, #795548 0%, #8d6e63 100%)'
-                };
-                container.style.backgroundImage = backgrounds[gameState.currentBackground];
-            }
-            
-            saveUserData();
-            closeBackgroundSelector();
-        }
-
-        // Initialize on load
-        window.onload = init;
-        
-        // Handle resize to maintain 16:9 aspect ratio
-        window.onresize = function() {
-            // CSS handles the responsive aspect ratio automatically
-        };
-
-        // Add keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 's' || e.key === 'S') {
-                if (gameState.isSitting) {
-                    standUp();
-                } else {
-                    sitDown();
-                }
-            }
-            if (e.key === 'Enter' && document.activeElement.id === 'chatMessage') {
-                sendMessage();
-            }
-        });
-
-        // Add touch support for mobile
-        let touchStartX, touchStartY;
-        
-        document.addEventListener('touchstart', function(e) {
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-        });
-        
-        document.addEventListener('touchend', function(e) {
-            const touchEndX = e.changedTouches[0].clientX;
-            const touchEndY = e.changedTouches[0].clientY;
-            
-            // Check if it's a tap (not a swipe)
-            const deltaX = Math.abs(touchEndX - touchStartX);
-            const deltaY = Math.abs(touchEndY - touchStartY);
-            
-            if (deltaX < 10 && deltaY < 10) {
-                // Trigger click event for tap
-                const clickEvent = new MouseEvent('click', {
-                    clientX: touchEndX,
-                    clientY: touchEndY,
-                    bubbles: true
-                });
-                e.target.dispatchEvent(clickEvent);
-            }
-        });
-
-        // Periodic character animations for demo characters
-        setInterval(() => {
-            gameState.characters.forEach((characterObj) => {
-                const character = characterObj.element;
-                
-                // Random chance for demo characters to chat
-                if (Math.random() > 0.95) {
-                    const messages = [
-                        'Om mani padme hum 🕉️', 
-                        'Bình an trong tâm 🙏', 
-                        'Hạnh phúc thật sự ✨',
-                        'Thiền định mỗi ngày 🧘',
-                        'Cảm ơn vũ trụ 🌌',
-                        'Yêu thương vô bờ ❤️'
-                    ];
-                    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-                    showChatBubble(character, randomMessage);
-                }
-                
-                // Random chance to change meditation state
-                if (Math.random() > 0.98) {
-                    if (character.classList.contains('sitting')) {
-                        character.classList.remove('sitting', 'meditating');
-                        character.classList.add('standing');
-                    } else {
-                        character.classList.remove('standing');
-                        character.classList.add('sitting', 'meditating');
-                    }
-                }
-            });
-        }, 2000);
-
-        // Auto-save meditation progress
-        setInterval(() => {
-            if (gameState.isSitting) {
-                gameState.meditationDays += 0.01; // Small increment for active meditation
-                
-                // Show meditation benefits occasionally
-                if (Math.random() > 0.95) {
-                    const benefits = [
-                        'Tâm trí đang thư giãn... 😌',
-                        'Căng thẳng đang tan biến... 🌸',
-                        'Năng lượng tích cực tăng... ✨',
-                        'Sự tập trung được cải thiện... 🎯',
-                        'Bình an nội tâm lan tỏa... 🕊️'
-                    ];
-                    showChatBubble(gameState.myCharacter, benefits[Math.floor(Math.random() * benefits.length)]);
-                }
-            }
-        }, 10000); // Every 10 seconds during meditation
-
-        // Easter eggs
-        let konamiCode = [];
-        const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
-        
-        document.addEventListener('keydown', function(e) {
-            konamiCode.push(e.code);
-            if (konamiCode.length > konamiSequence.length) {
-                konamiCode.shift();
-            }
-            
-            if (JSON.stringify(konamiCode) === JSON.stringify(konamiSequence)) {
-                // Easter egg: Enlightenment mode
-                showChatBubble(gameState.myCharacter, '🌟 ENLIGHTENMENT ACHIEVED! 🌟');
-                gameState.myCharacter.style.filter = 'drop-shadow(0 0 30px gold) hue-rotate(45deg)';
-                setTimeout(() => {
-                    gameState.myCharacter.style.filter = '';
-                }, 5000);
-                konamiCode = [];
-            }
-        });
-
-        // Add weather effects occasionally
-        function createWeatherEffect() {
-            if (Math.random() > 0.9) {
-                const effects = ['rain', 'snow', 'petals'];
-                const effect = effects[Math.floor(Math.random() * effects.length)];
-                
-                for (let i = 0; i < 20; i++) {
-                    setTimeout(() => {
-                        createWeatherParticle(effect);
-                    }, i * 100);
-                }
-            }
-        }
-
-        function createWeatherParticle(type) {
-            const particle = document.createElement('div');
-            particle.style.position = 'absolute';
-            particle.style.pointerEvents = 'none';
-            particle.style.zIndex = '2';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.top = '-10px';
-            
-            switch(type) {
-                case 'rain':
-                    particle.textContent = '💧';
-                    break;
-                case 'snow':
-                    particle.textContent = '❄️';
-                    break;
-                case 'petals':
-                    particle.textContent = '🌸';
-                    break;
-            }
-            
-            particle.style.fontSize = (Math.random() * 10 + 10) + 'px';
-            particle.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
-            
-            document.querySelector('.room-container').appendChild(particle);
-            
-            setTimeout(() => {
-                if (particle.parentNode) {
-                    particle.remove();
-                }
-            }, 5000);
-        }
-
-        // Add CSS for weather animations
-        const weatherCSS = `
-            @keyframes fall {
-                to {
-                    transform: translateY(calc(100vh + 50px)) rotate(360deg);
-                    opacity: 0;
-                }
-            }
-        `;
-        
-        const style = document.createElement('style');
-        style.textContent = weatherCSS;
-        document.head.appendChild(style);
-
-        // Start weather effects
-        setInterval(createWeatherEffect, 30000); // Every 30 seconds
-
-        // Performance optimization: Pause animations when tab is not visible
-        document.addEventListener('visibilitychange', function() {
-            const characters = document.querySelectorAll('.character');
-            characters.forEach(char => {
-                if (document.hidden) {
-                    char.style.animationPlayState = 'paused';
-                } else {
-                    char.style.animationPlayState = 'running';
-                }
-            });
-        });
-
-        // Add sound effects for interactions
-        function playSound(type) {
-            // Create audio context for sound effects
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            switch(type) {
-                case 'sit':
-                    oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(220, audioContext.currentTime + 0.5);
-                    break;
-                case 'stand':
-                    oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(440, audioContext.currentTime + 0.3);
-                    break;
-                case 'move':
-                    oscillator.frequency.setValueAtTime(330, audioContext.currentTime);
-                    break;
-            }
-            
-            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-            
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.5);
-        }
-
-        // Override functions to add sound effects
-        const originalSitDown = sitDown;
-        sitDown = function() {
-            originalSitDown();
-            playSound('sit');
-        };
-
-        const originalStandUp = standUp;
-        standUp = function() {
-            originalStandUp();
-            playSound('stand');
-        };
-
-        const originalMoveCharacterTo = moveCharacterTo;
-        moveCharacterTo = function(x, y) {
-            originalMoveCharacterTo(x, y);
-            playSound('move');
-        };
-    </script>
-</body>
-</html>
