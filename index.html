@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meditation Room V2</title>
+    <title>Meditation Room V3</title>
     <style>
         * {
             margin: 0;
@@ -16,17 +16,23 @@
             overflow: hidden;
             height: 100vh;
             width: 100vw;
-            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #1a1a2e;
         }
 
         .room-container {
-            width: 100vw;
-            height: 100vh;
+            width: min(100vw, calc(100vh * 16/9));
+            height: min(100vh, calc(100vw * 9/16));
             position: relative;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             background-size: cover;
             background-position: center;
             transition: background 0.5s ease;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
 
         .room-background {
@@ -35,7 +41,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:%23e8f4fd;stop-opacity:1" /><stop offset="100%" style="stop-color:%23b8e6b8;stop-opacity:1" /></linearGradient></defs><rect width="1200" height="800" fill="url(%23skyGrad)"/><circle cx="200" cy="200" r="60" fill="%23ffeb3b" opacity="0.8"/><rect x="0" y="600" width="1200" height="200" fill="%2366bb6a"/><ellipse cx="300" cy="650" rx="80" ry="50" fill="%234caf50"/><ellipse cx="700" cy="680" rx="100" ry="60" fill="%234caf50"/><ellipse cx="1000" cy="630" rx="90" ry="45" fill="%234caf50"/><path d="M100,700 Q200,650 300,700 T500,700" stroke="%23388e3c" stroke-width="4" fill="none"/><circle cx="150" cy="150" r="3" fill="%23fff" opacity="0.7"/><circle cx="800" cy="100" r="2" fill="%23fff" opacity="0.6"/><circle cx="1000" cy="180" r="2.5" fill="%23fff" opacity="0.8"/></svg>');
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900"><defs><linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:%23e8f4fd;stop-opacity:1" /><stop offset="70%" style="stop-color:%23b8e6b8;stop-opacity:1" /><stop offset="100%" style="stop-color:%2366bb6a;stop-opacity:1" /></linearGradient></defs><rect width="1600" height="900" fill="url(%23skyGrad)"/><circle cx="1400" cy="150" r="80" fill="%23ffeb3b" opacity="0.9"/><ellipse cx="200" cy="750" rx="150" ry="80" fill="%234caf50"/><ellipse cx="600" cy="780" rx="200" ry="100" fill="%234caf50"/><ellipse cx="1200" cy="730" rx="180" ry="90" fill="%234caf50"/><path d="M0,800 Q400,700 800,750 T1600,800 L1600,900 L0,900 Z" fill="%23388e3c"/><circle cx="300" cy="200" r="4" fill="%23fff" opacity="0.8"/><circle cx="800" cy="120" r="3" fill="%23fff" opacity="0.6"/><circle cx="1300" cy="250" r="5" fill="%23fff" opacity="0.7"/></svg>');
             background-size: cover;
             background-position: center;
             z-index: 1;
@@ -43,55 +49,111 @@
 
         .character {
             position: absolute;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
+            width: 64px;
+            height: 96px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease;
             z-index: 10;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            border: 3px solid #fff;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            justify-content: flex-end;
         }
 
         .character:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            transform: scale(1.05);
+        }
+
+        .character.walking {
+            animation: walk 0.6s infinite;
         }
 
         .character.sitting {
             cursor: default;
-            pointer-events: none;
         }
 
-        .character img {
+        .character.meditating {
+            animation: meditate 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
+        }
+
+        @keyframes walk {
+            0%, 100% { transform: translateY(0px) scaleX(1); }
+            25% { transform: translateY(-2px) scaleX(0.98); }
+            50% { transform: translateY(0px) scaleX(1); }
+            75% { transform: translateY(-1px) scaleX(0.98); }
+        }
+
+        @keyframes meditate {
+            0%, 100% { 
+                filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.4));
+                transform: scale(1);
+            }
+            50% { 
+                filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8));
+                transform: scale(1.02);
+            }
+        }
+
+        .character-body {
             width: 100%;
             height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
+            position: relative;
+            background: transparent;
+        }
+
+        .character.standing .character-body {
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 96"><defs><radialGradient id="aura" cx="50%" cy="50%" r="60%"><stop offset="0%" style="stop-color:rgba(255,215,0,0);stop-opacity:0" /><stop offset="100%" style="stop-color:rgba(255,215,0,0);stop-opacity:0" /></radialGradient></defs><ellipse cx="32" cy="85" rx="15" ry="8" fill="rgba(0,0,0,0.2)"/><circle cx="32" cy="20" r="12" fill="%23fdbcb4" stroke="%23e8a48a" stroke-width="1"/><ellipse cx="29" cy="18" rx="1.5" ry="2" fill="%23333"/><ellipse cx="35" cy="18" rx="1.5" ry="2" fill="%23333"/><ellipse cx="32" cy="22" rx="2" ry="1" fill="%23d2a679"/><path d="M20 15 Q32 8 44 15 Q32 12 20 15" fill="%236b4423"/><rect x="26" y="32" width="12" height="20" rx="6" fill="%234a90e2"/><rect x="24" y="52" width="16" height="24" rx="8" fill="%232c3e50"/><circle cx="22" cy="38" r="3" fill="%23fdbcb4"/><circle cx="42" cy="38" r="3" fill="%23fdbcb4"/><ellipse cx="26" cy="80" rx="4" ry="8" fill="%23654321"/><ellipse cx="38" cy="80" rx="4" ry="8" fill="%23654321"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .character.sitting .character-body {
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 96"><defs><radialGradient id="aura" cx="50%" cy="50%" r="80%"><stop offset="0%" style="stop-color:rgba(255,215,0,0.3);stop-opacity:0.6" /><stop offset="100%" style="stop-color:rgba(255,215,0,0);stop-opacity:0" /></radialGradient></defs><circle cx="32" cy="48" r="45" fill="url(%23aura)"/><ellipse cx="32" cy="85" rx="20" ry="10" fill="rgba(0,0,0,0.2)"/><circle cx="32" cy="25" r="12" fill="%23fdbcb4" stroke="%23e8a48a" stroke-width="1"/><ellipse cx="29" cy="23" rx="1" ry="1.5" fill="%23333"/><ellipse cx="35" cy="23" rx="1" ry="1.5" fill="%23333"/><path d="M28 26 Q32 28 36 26" stroke="%23333" stroke-width="1" fill="none"/><path d="M20 18 Q32 12 44 18 Q32 15 20 18" fill="%236b4423"/><rect x="26" y="37" width="12" height="18" rx="6" fill="%234a90e2"/><circle cx="32" cy="65" r="8" fill="%232c3e50"/><circle cx="20" cy="50" r="4" fill="%23fdbcb4"/><circle cx="44" cy="50" r="4" fill="%23fdbcb4"/><ellipse cx="24" cy="72" rx="6" ry="4" fill="%232c3e50"/><ellipse cx="40" cy="72" rx="6" ry="4" fill="%232c3e50"/><circle cx="28" cy="48" r="3" fill="%23fdbcb4"/><circle cx="36" cy="48" r="3" fill="%23fdbcb4"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
         }
 
         .chat-bubble {
             position: absolute;
-            bottom: 70px;
+            bottom: 100px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(255,255,255,0.95);
             padding: 8px 12px;
-            border-radius: 20px;
-            max-width: 160px;
+            border-radius: 15px;
+            max-width: 64px;
+            width: auto;
+            min-width: 40px;
             word-wrap: break-word;
-            font-size: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            word-break: break-word;
+            font-size: 10px;
+            line-height: 1.2;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             z-index: 15;
-            animation: fadeInOut 3s ease-in-out;
+            animation: chatFadeInOut 5s ease-in-out;
+            text-align: center;
+            border: 2px solid rgba(255,255,255,0.8);
         }
 
-        @keyframes fadeInOut {
-            0%, 100% { opacity: 0; transform: translateX(-50%) translateY(10px); }
-            10%, 90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .chat-bubble::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 8px solid rgba(255,255,255,0.95);
+        }
+
+        @keyframes chatFadeInOut {
+            0%, 100% { opacity: 0; transform: translateX(-50%) translateY(10px) scale(0.8); }
+            10%, 90% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
         }
 
         .controls {
@@ -105,20 +167,27 @@
         }
 
         .btn {
-            padding: 10px 15px;
+            padding: 12px 18px;
             background: rgba(255,255,255,0.9);
             border: none;
             border-radius: 25px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: bold;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
         }
 
         .btn:hover {
             background: rgba(255,255,255,1);
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn.active {
+            background: #4caf50;
+            color: white;
         }
 
         .music-controls {
@@ -130,6 +199,8 @@
             padding: 15px;
             border-radius: 15px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            max-width: 300px;
         }
 
         .music-list {
@@ -144,11 +215,13 @@
             background: rgba(255,255,255,0.7);
             border-radius: 8px;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
+            font-size: 12px;
         }
 
         .music-item:hover {
             background: rgba(255,255,255,1);
+            transform: translateX(5px);
         }
 
         .music-item.playing {
@@ -166,12 +239,13 @@
         }
 
         .chat-input input {
-            padding: 10px 15px;
+            padding: 12px 18px;
             border: none;
             border-radius: 25px;
-            width: 200px;
+            width: 250px;
             background: rgba(255,255,255,0.9);
             font-size: 14px;
+            backdrop-filter: blur(10px);
         }
 
         .profile-modal {
@@ -185,23 +259,29 @@
             display: none;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(5px);
         }
 
         .profile-content {
             background: white;
             padding: 30px;
             border-radius: 20px;
-            max-width: 400px;
+            max-width: 500px;
             width: 90%;
             text-align: center;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         .profile-avatar {
             width: 80px;
-            height: 80px;
-            border-radius: 50%;
+            height: 120px;
             margin: 0 auto 20px;
             border: 3px solid #ddd;
+            border-radius: 10px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
         }
 
         .stars {
@@ -210,24 +290,46 @@
             margin: 10px 0;
         }
 
-        .avatar-selector {
+        .customization-panel {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
+            grid-template-columns: 1fr;
+            gap: 20px;
             margin: 20px 0;
+            text-align: left;
         }
 
-        .avatar-option {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+        .customization-section {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .customization-section h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .option-item {
+            width: 40px;
+            height: 30px;
+            border-radius: 5px;
             cursor: pointer;
             border: 2px solid transparent;
             transition: border 0.3s ease;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
         }
 
-        .avatar-option:hover, .avatar-option.selected {
+        .option-item:hover, .option-item.selected {
             border-color: #4caf50;
+            transform: scale(1.1);
         }
 
         .hidden {
@@ -244,6 +346,7 @@
             border-radius: 15px;
             z-index: 150;
             display: none;
+            backdrop-filter: blur(10px);
         }
 
         .bg-options {
@@ -265,16 +368,17 @@
 
         .bg-option:hover, .bg-option.selected {
             border-color: #4caf50;
+            transform: scale(1.05);
         }
 
         .achievement-badge {
             display: inline-block;
             background: #4caf50;
             color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 10px;
-            margin: 2px;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            margin: 3px;
         }
 
         .url-input {
@@ -282,13 +386,14 @@
             padding: 8px;
             margin: 10px 0;
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 8px;
         }
 
         #currentTrack {
             font-weight: bold;
             color: #4caf50;
             margin: 10px 0;
+            font-size: 12px;
         }
 
         .volume-control {
@@ -298,17 +403,76 @@
         .volume-control input {
             width: 100%;
         }
+
+        .character-status {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            white-space: nowrap;
+        }
+
+        .move-indicator {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #4caf50;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 5;
+            animation: moveIndicator 1s ease-out;
+        }
+
+        @keyframes moveIndicator {
+            0% { 
+                transform: scale(0.5);
+                opacity: 1;
+                border-width: 4px;
+            }
+            100% { 
+                transform: scale(1.5);
+                opacity: 0;
+                border-width: 1px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .btn {
+                padding: 10px 15px;
+                font-size: 12px;
+            }
+            
+            .music-controls {
+                max-width: 250px;
+                padding: 10px;
+            }
+            
+            .chat-input input {
+                width: 180px;
+                padding: 10px 15px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="room-container">
+    <div class="room-container" id="roomContainer">
         <div class="room-background"></div>
         
         <div class="controls">
-            <button class="btn" onclick="sitDown()">Ngồi thiền</button>
-            <button class="btn" onclick="standUp()">Đứng dậy</button>
-            <button class="btn" onclick="showProfile()">Profile</button>
-            <button class="btn" onclick="showBackgroundSelector()">Đổi nền</button>
+            <button class="btn" id="standBtn" onclick="standUp()">🚶 ĐI</button>
+            <button class="btn" id="sitBtn" onclick="sitDown()">🧘 NGỒI THIỀN</button>
+            <button class="btn" onclick="showProfile()">👤 Profile</button>
+            <button class="btn" onclick="showBackgroundSelector()">🎨 Đổi nền</button>
         </div>
 
         <div class="music-controls">
@@ -327,7 +491,7 @@
 
         <div class="chat-input">
             <input type="text" id="chatMessage" placeholder="Nhập tin nhắn..." maxlength="160" onkeypress="if(event.key==='Enter') sendMessage()">
-            <button class="btn" onclick="sendMessage()">Gửi</button>
+            <button class="btn" onclick="sendMessage()">💬 Gửi</button>
         </div>
     </div>
 
@@ -335,10 +499,8 @@
     <div class="profile-modal" id="profileModal">
         <div class="profile-content">
             <h3>Profile thiền sinh</h3>
-            <div class="profile-avatar">
-                <img id="profileAvatar" src="" alt="Avatar">
-            </div>
-            <input type="text" id="userName" placeholder="Tên của bạn" style="width:100%; padding:10px; margin:10px 0; border:1px solid #ddd; border-radius:5px;">
+            <div class="profile-avatar" id="profileAvatar"></div>
+            <input type="text" id="userName" placeholder="Tên của bạn" style="width:100%; padding:10px; margin:10px 0; border:1px solid #ddd; border-radius:8px;">
             
             <div class="stars" id="achievementStars">⭐⭐⭐</div>
             <div id="achievementText">Thiền sinh tận tâm - 3 tuần kiên trì</div>
@@ -347,12 +509,36 @@
             <div class="achievement-badge">Kiên trì 1 tuần</div>
             <div class="achievement-badge">Thiền sư nhỏ</div>
 
-            <h4>Chọn avatar:</h4>
-            <div class="avatar-selector" id="avatarSelector"></div>
+            <div class="customization-panel">
+                <div class="customization-section">
+                    <h4>👕 Áo:</h4>
+                    <div class="option-grid" id="shirtOptions"></div>
+                </div>
+                
+                <div class="customization-section">
+                    <h4>👖 Quần:</h4>
+                    <div class="option-grid" id="pantsOptions"></div>
+                </div>
+                
+                <div class="customization-section">
+                    <h4>👟 Giày:</h4>
+                    <div class="option-grid" id="shoesOptions"></div>
+                </div>
+                
+                <div class="customization-section">
+                    <h4>💇 Tóc:</h4>
+                    <div class="option-grid" id="hairOptions"></div>
+                </div>
+                
+                <div class="customization-section">
+                    <h4>🎨 Màu da:</h4>
+                    <div class="option-grid" id="skinOptions"></div>
+                </div>
+            </div>
             
             <div style="margin-top: 20px;">
-                <button class="btn" onclick="saveProfile()">Lưu</button>
-                <button class="btn" onclick="closeProfile()">Đóng</button>
+                <button class="btn" onclick="saveProfile()">💾 Lưu</button>
+                <button class="btn" onclick="closeProfile()">❌ Đóng</button>
             </div>
         </div>
     </div>
@@ -360,24 +546,22 @@
     <!-- Character Profile Modal -->
     <div class="profile-modal" id="characterModal">
         <div class="profile-content">
-            <div class="profile-avatar">
-                <img id="characterAvatar" src="" alt="Avatar">
-            </div>
+            <div class="profile-avatar" id="characterAvatar"></div>
             <h3 id="characterName">Tên nhân vật</h3>
             <div class="stars" id="characterStars">⭐⭐</div>
             <p id="characterBio">Thiền sinh mới bắt đầu hành trình tìm hiểu bản thân.</p>
             <div style="margin-top: 20px;">
-                <button class="btn">Kết bạn</button>
-                <button class="btn">Nhắn tin</button>
-                <button class="btn" style="background:#f44336; color:white;">Block</button>
+                <button class="btn">🤝 Kết bạn</button>
+                <button class="btn">💬 Nhắn tin</button>
+                <button class="btn" style="background:#f44336; color:white;">🚫 Block</button>
             </div>
-            <button class="btn" onclick="closeCharacterModal()" style="margin-top:10px;">Đóng</button>
+            <button class="btn" onclick="closeCharacterModal()" style="margin-top:10px;">❌ Đóng</button>
         </div>
     </div>
 
     <!-- Background Selector -->
     <div class="background-selector" id="backgroundSelector">
-        <h3>Chọn nền thiền</h3>
+        <h3>🌸 Chọn nền thiền</h3>
         <div class="bg-options">
             <div class="bg-option" data-bg="garden" style="background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
             <div class="bg-option" data-bg="forest" style="background-image: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);"></div>
@@ -388,39 +572,50 @@
         </div>
         <input type="file" id="customBackground" accept="image/*" style="margin: 10px 0;">
         <div>
-            <button class="btn" onclick="applyBackground()">Áp dụng</button>
-            <button class="btn" onclick="closeBackgroundSelector()">Đóng</button>
+            <button class="btn" onclick="applyBackground()">✅ Áp dụng</button>
+            <button class="btn" onclick="closeBackgroundSelector()">❌ Đóng</button>
         </div>
     </div>
 
     <audio id="meditationAudio" loop></audio>
 
     <script>
-        // Avatar data
-        const avatars = {
-            male: [
-                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23fdbcb4"/><circle cx="50" cy="35" r="18" fill="%23fdbcb4"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%234a90e2"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/></svg>',
-                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23d08b5b"/><circle cx="50" cy="35" r="18" fill="%23d08b5b"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%23e74c3c"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/></svg>',
-                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23f1c27d"/><circle cx="50" cy="35" r="18" fill="%23f1c27d"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%2327ae60"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/></svg>',
-                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23ffdbac"/><circle cx="50" cy="35" r="18" fill="%23ffdbac"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%23f39c12"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/></svg>',
-                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%238d5524"/><circle cx="50" cy="35" r="18" fill="%238d5524"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%239b59b6"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/></svg>',
-                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23c0392b"/><circle cx="50" cy="35" r="18" fill="%23c0392b"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%2334495e"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/></svg>',
-                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23f7dc6f"/><circle cx="50" cy="35" r="18" fill="%23f7dc6f"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%231abc9c"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/></svg>',
-                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23fadbd8"/><circle cx="50" cy="35" r="18" fill="%23fadbd8"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%232980b9"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/></svg>',
-                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23e8daef"/><circle cx="50" cy="35" r="18" fill="%23e8daef"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%23e67e22"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/></svg>',
-                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23a9dfbf"/><circle cx="50" cy="35" r="18" fill="%23a9dfbf"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%2316a085"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/></svg>'
+        // Character customization options
+        const customizationOptions = {
+            shirts: [
+                { color: '#4a90e2', pattern: 'solid' },
+                { color: '#e74c3c', pattern: 'solid' },
+                { color: '#27ae60', pattern: 'solid' },
+                { color: '#f39c12', pattern: 'solid' },
+                { color: '#9b59b6', pattern: 'solid' }
             ],
-            female: [
-                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23fdbcb4"/><circle cx="50" cy="35" r="18" fill="%23fdbcb4"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%23e91e63"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/><path d="M35 25 Q50 20 65 25" stroke="%23d2691e" stroke-width="3" fill="none"/></svg>',
-                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23d08b5b"/><circle cx="50" cy="35" r="18" fill="%23d08b5b"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%239c27b0"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/><path d="M35 25 Q50 20 65 25" stroke="%23000" stroke-width="3" fill="none"/></svg>',
-                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23f1c27d"/><circle cx="50" cy="35" r="18" fill="%23f1c27d"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%23ff5722"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/><path d="M35 25 Q50 20 65 25" stroke="%23ffd54f" stroke-width="3" fill="none"/></svg>',
-                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23ffdbac"/><circle cx="50" cy="35" r="18" fill="%23ffdbac"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%23673ab7"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/><path d="M35 25 Q50 20 65 25" stroke="%23ff6f00" stroke-width="3" fill="none"/></svg>',
-                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%238d5524"/><circle cx="50" cy="35" r="18" fill="%238d5524"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%23795548"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/><path d="M35 25 Q50 20 65 25" stroke="%236d4c41" stroke-width="3" fill="none"/></svg>',
-                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23c0392b"/><circle cx="50" cy="35" r="18" fill="%23c0392b"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%23607d8b"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/><path d="M35 25 Q50 20 65 25" stroke="%23000" stroke-width="3" fill="none"/></svg>',
-                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23f7dc6f"/><circle cx="50" cy="35" r="18" fill="%23f7dc6f"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%23388e3c"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/><path d="M35 25 Q50 20 65 25" stroke="%23ffb300" stroke-width="3" fill="none"/></svg>',
-                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23fadbd8"/><circle cx="50" cy="35" r="18" fill="%23fadbd8"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%23d32f2f"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/><path d="M35 25 Q50 20 65 25" stroke="%23ff8a65" stroke-width="3" fill="none"/></svg>',
-                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23e8daef"/><circle cx="50" cy="35" r="18" fill="%23e8daef"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%238e44ad"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/><path d="M35 25 Q50 20 65 25" stroke="%23d63031" stroke-width="3" fill="none"/></svg>',
-                'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23a9dfbf"/><circle cx="50" cy="35" r="18" fill="%23a9dfbf"/><rect x="32" y="45" width="36" height="40" rx="18" fill="%232c3e50"/><circle cx="42" cy="30" r="2" fill="%23000"/><circle cx="58" cy="30" r="2" fill="%23000"/><path d="M45 38 Q50 42 55 38" stroke="%23000" stroke-width="2" fill="none"/><path d="M35 25 Q50 20 65 25" stroke="%2327ae60" stroke-width="3" fill="none"/></svg>'
+            pants: [
+                { color: '#2c3e50', pattern: 'solid' },
+                { color: '#34495e', pattern: 'solid' },
+                { color: '#8b4513', pattern: 'solid' },
+                { color: '#556b2f', pattern: 'solid' },
+                { color: '#483d8b', pattern: 'solid' }
+            ],
+            shoes: [
+                { color: '#654321', type: 'boots' },
+                { color: '#2c3e50', type: 'sneakers' },
+                { color: '#8b4513', type: 'sandals' },
+                { color: '#000000', type: 'formal' },
+                { color: '#ffffff', type: 'canvas' }
+            ],
+            hair: [
+                { color: '#6b4423', style: 'short' },
+                { color: '#000000', style: 'long' },
+                { color: '#d2691e', style: 'wavy' },
+                { color: '#ffd54f', style: 'curly' },
+                { color: '#8b4513', style: 'braided' }
+            ],
+            skin: [
+                { tone: '#fdbcb4', name: 'Light' },
+                { tone: '#f1c27d', name: 'Medium' },
+                { tone: '#d08b5b', name: 'Tan' },
+                { tone: '#8d5524', name: 'Brown' },
+                { tone: '#654321', name: 'Dark' }
             ]
         };
 
@@ -428,14 +623,22 @@
         let gameState = {
             characters: new Map(),
             myCharacter: null,
+            isMoving: false,
             isSitting: false,
             currentMusic: null,
             musicList: [],
-            selectedAvatar: 0,
             userName: '',
             meditationDays: 0,
             joinDate: new Date(),
-            currentBackground: 'garden'
+            currentBackground: 'garden',
+            customization: {
+                shirt: 0,
+                pants: 0,
+                shoes: 0,
+                hair: 0,
+                skin: 0
+            },
+            moveTarget: null
         };
 
         // Default meditation tracks
@@ -449,25 +652,29 @@
         // Initialize
         function init() {
             loadUserData();
-            setupAvatarSelector();
+            setupCustomizationOptions();
             setupMusicList();
             setupBackgroundOptions();
             createMyCharacter();
             addOtherCharacters();
+            setupRoomInteraction();
+            updateButtonStates();
             
             // Auto-save every 30 seconds
             setInterval(saveUserData, 30000);
         }
 
         function loadUserData() {
-            const saved = localStorage.getItem('meditationRoom') || '{}';
+            const saved = localStorage.getItem('meditationRoomV3') || '{}';
             const data = JSON.parse(saved);
             
             gameState.userName = data.userName || 'Thiền sinh mới';
-            gameState.selectedAvatar = data.selectedAvatar || 0;
             gameState.joinDate = new Date(data.joinDate || Date.now());
             gameState.meditationDays = data.meditationDays || 0;
             gameState.currentBackground = data.currentBackground || 'garden';
+            gameState.customization = data.customization || {
+                shirt: 0, pants: 0, shoes: 0, hair: 0, skin: 0
+            };
             
             // Calculate achievement days
             const daysDiff = Math.floor((Date.now() - gameState.joinDate.getTime()) / (1000 * 60 * 60 * 24));
@@ -479,41 +686,217 @@
         function saveUserData() {
             const data = {
                 userName: gameState.userName,
-                selectedAvatar: gameState.selectedAvatar,
                 joinDate: gameState.joinDate.toISOString(),
                 meditationDays: gameState.meditationDays,
-                currentBackground: gameState.currentBackground
+                currentBackground: gameState.currentBackground,
+                customization: gameState.customization
             };
-            localStorage.setItem('meditationRoom', JSON.stringify(data));
+            localStorage.setItem('meditationRoomV3', JSON.stringify(data));
         }
 
-        function setupAvatarSelector() {
-            const selector = document.getElementById('avatarSelector');
-            const allAvatars = [...avatars.male, ...avatars.female];
-            
-            allAvatars.forEach((avatar, index) => {
-                const img = document.createElement('img');
-                img.src = avatar;
-                img.className = 'avatar-option';
-                if (index === gameState.selectedAvatar) {
-                    img.classList.add('selected');
+        function setupCustomizationOptions() {
+            // Setup shirt options
+            const shirtContainer = document.getElementById('shirtOptions');
+            customizationOptions.shirts.forEach((shirt, index) => {
+                const option = document.createElement('div');
+                option.className = 'option-item';
+                option.style.backgroundColor = shirt.color;
+                option.onclick = () => selectCustomization('shirt', index);
+                if (index === gameState.customization.shirt) {
+                    option.classList.add('selected');
                 }
-                img.onclick = () => selectAvatar(index);
-                selector.appendChild(img);
+                shirtContainer.appendChild(option);
+            });
+
+            // Setup pants options
+            const pantsContainer = document.getElementById('pantsOptions');
+            customizationOptions.pants.forEach((pants, index) => {
+                const option = document.createElement('div');
+                option.className = 'option-item';
+                option.style.backgroundColor = pants.color;
+                option.onclick = () => selectCustomization('pants', index);
+                if (index === gameState.customization.pants) {
+                    option.classList.add('selected');
+                }
+                pantsContainer.appendChild(option);
+            });
+
+            // Setup shoes options
+            const shoesContainer = document.getElementById('shoesOptions');
+            customizationOptions.shoes.forEach((shoes, index) => {
+                const option = document.createElement('div');
+                option.className = 'option-item';
+                option.style.backgroundColor = shoes.color;
+                option.onclick = () => selectCustomization('shoes', index);
+                if (index === gameState.customization.shoes) {
+                    option.classList.add('selected');
+                }
+                shoesContainer.appendChild(option);
+            });
+
+            // Setup hair options
+            const hairContainer = document.getElementById('hairOptions');
+            customizationOptions.hair.forEach((hair, index) => {
+                const option = document.createElement('div');
+                option.className = 'option-item';
+                option.style.backgroundColor = hair.color;
+                option.onclick = () => selectCustomization('hair', index);
+                if (index === gameState.customization.hair) {
+                    option.classList.add('selected');
+                }
+                hairContainer.appendChild(option);
+            });
+
+            // Setup skin options
+            const skinContainer = document.getElementById('skinOptions');
+            customizationOptions.skin.forEach((skin, index) => {
+                const option = document.createElement('div');
+                option.className = 'option-item';
+                option.style.backgroundColor = skin.tone;
+                option.onclick = () => selectCustomization('skin', index);
+                if (index === gameState.customization.skin) {
+                    option.classList.add('selected');
+                }
+                skinContainer.appendChild(option);
             });
         }
 
-        function selectAvatar(index) {
-            gameState.selectedAvatar = index;
-            document.querySelectorAll('.avatar-option').forEach((el, i) => {
+        function selectCustomization(type, index) {
+            gameState.customization[type] = index;
+            
+            // Update UI
+            document.querySelectorAll(`#${type}Options .option-item`).forEach((el, i) => {
                 el.classList.toggle('selected', i === index);
             });
             
-            if (gameState.myCharacter) {
-                const allAvatars = [...avatars.male, ...avatars.female];
-                gameState.myCharacter.querySelector('img').src = allAvatars[index];
-                document.getElementById('profileAvatar').src = allAvatars[index];
+            // Update character appearance
+            updateCharacterAppearance();
+        }
+
+        function updateCharacterAppearance() {
+            if (!gameState.myCharacter) return;
+            
+            const customization = gameState.customization;
+            const shirt = customizationOptions.shirts[customization.shirt];
+            const pants = customizationOptions.pants[customization.pants];
+            const shoes = customizationOptions.shoes[customization.shoes];
+            const hair = customizationOptions.hair[customization.hair];
+            const skin = customizationOptions.skin[customization.skin];
+            
+            // Generate custom SVG based on current state
+            let svgContent;
+            
+            if (gameState.isSitting) {
+                svgContent = generateSittingCharacterSVG(skin, shirt, pants, shoes, hair);
+                gameState.myCharacter.className = 'character sitting meditating';
+            } else {
+                svgContent = generateStandingCharacterSVG(skin, shirt, pants, shoes, hair);
+                gameState.myCharacter.className = 'character standing';
             }
+            
+            gameState.myCharacter.querySelector('.character-body').style.backgroundImage = `url('data:image/svg+xml,${encodeURIComponent(svgContent)}')`;
+            
+            // Update profile avatar
+            const profileAvatar = document.getElementById('profileAvatar');
+            if (profileAvatar) {
+                profileAvatar.style.backgroundImage = `url('data:image/svg+xml,${encodeURIComponent(svgContent)}')`;
+            }
+        }
+
+        function generateStandingCharacterSVG(skin, shirt, pants, shoes, hair) {
+            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 96">
+                <defs>
+                    <radialGradient id="aura" cx="50%" cy="50%" r="60%">
+                        <stop offset="0%" style="stop-color:rgba(255,215,0,0);stop-opacity:0" />
+                        <stop offset="100%" style="stop-color:rgba(255,215,0,0);stop-opacity:0" />
+                    </radialGradient>
+                </defs>
+                <!-- Shadow -->
+                <ellipse cx="32" cy="90" rx="15" ry="6" fill="rgba(0,0,0,0.2)"/>
+                
+                <!-- Head -->
+                <circle cx="32" cy="20" r="12" fill="${skin.tone}" stroke="#e8a48a" stroke-width="1"/>
+                
+                <!-- Eyes -->
+                <ellipse cx="29" cy="18" rx="1.5" ry="2" fill="#333"/>
+                <ellipse cx="35" cy="18" rx="1.5" ry="2" fill="#333"/>
+                
+                <!-- Nose -->
+                <ellipse cx="32" cy="22" rx="2" ry="1" fill="#d2a679"/>
+                
+                <!-- Hair -->
+                <path d="M20 15 Q32 8 44 15 Q32 12 20 15" fill="${hair.color}"/>
+                
+                <!-- Shirt -->
+                <rect x="26" y="32" width="12" height="20" rx="6" fill="${shirt.color}"/>
+                
+                <!-- Pants -->
+                <rect x="24" y="52" width="16" height="24" rx="8" fill="${pants.color}"/>
+                
+                <!-- Arms -->
+                <circle cx="22" cy="38" r="3" fill="${skin.tone}"/>
+                <circle cx="42" cy="38" r="3" fill="${skin.tone}"/>
+                
+                <!-- Legs -->
+                <ellipse cx="28" cy="80" rx="4" ry="8" fill="${skin.tone}"/>
+                <ellipse cx="36" cy="80" rx="4" ry="8" fill="${skin.tone}"/>
+                
+                <!-- Shoes -->
+                <ellipse cx="26" cy="88" rx="6" ry="4" fill="${shoes.color}"/>
+                <ellipse cx="38" cy="88" rx="6" ry="4" fill="${shoes.color}"/>
+            </svg>`;
+        }
+
+        function generateSittingCharacterSVG(skin, shirt, pants, shoes, hair) {
+            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 96">
+                <defs>
+                    <radialGradient id="aura" cx="50%" cy="50%" r="80%">
+                        <stop offset="0%" style="stop-color:rgba(255,215,0,0.3);stop-opacity:0.6" />
+                        <stop offset="100%" style="stop-color:rgba(255,215,0,0);stop-opacity:0" />
+                    </radialGradient>
+                </defs>
+                
+                <!-- Meditation Aura -->
+                <circle cx="32" cy="48" r="45" fill="url(#aura)"/>
+                
+                <!-- Shadow -->
+                <ellipse cx="32" cy="85" rx="20" ry="10" fill="rgba(0,0,0,0.2)"/>
+                
+                <!-- Head -->
+                <circle cx="32" cy="25" r="12" fill="${skin.tone}" stroke="#e8a48a" stroke-width="1"/>
+                
+                <!-- Closed Eyes (meditation) -->
+                <ellipse cx="29" cy="23" rx="1" ry="0.5" fill="#333"/>
+                <ellipse cx="35" cy="23" rx="1" ry="0.5" fill="#333"/>
+                
+                <!-- Peaceful smile -->
+                <path d="M28 26 Q32 28 36 26" stroke="#333" stroke-width="1" fill="none"/>
+                
+                <!-- Hair -->
+                <path d="M20 18 Q32 12 44 18 Q32 15 20 18" fill="${hair.color}"/>
+                
+                <!-- Shirt -->
+                <rect x="26" y="37" width="12" height="18" rx="6" fill="${shirt.color}"/>
+                
+                <!-- Sitting position - lotus pose -->
+                <circle cx="32" cy="65" r="8" fill="${pants.color}"/>
+                
+                <!-- Meditation hands -->
+                <circle cx="20" cy="50" r="4" fill="${skin.tone}"/>
+                <circle cx="44" cy="50" r="4" fill="${skin.tone}"/>
+                
+                <!-- Crossed legs -->
+                <ellipse cx="24" cy="72" rx="6" ry="4" fill="${pants.color}"/>
+                <ellipse cx="40" cy="72" rx="6" ry="4" fill="${pants.color}"/>
+                
+                <!-- Prayer hands -->
+                <circle cx="28" cy="48" r="3" fill="${skin.tone}"/>
+                <circle cx="36" cy="48" r="3" fill="${skin.tone}"/>
+                
+                <!-- Feet -->
+                <ellipse cx="22" cy="76" rx="4" ry="3" fill="${shoes.color}"/>
+                <ellipse cx="42" cy="76" rx="4" ry="3" fill="${shoes.color}"/>
+            </svg>`;
         }
 
         function setupMusicList() {
@@ -568,7 +951,6 @@
             
             if (url.includes('youtube.com') || url.includes('youtu.be')) {
                 trackName = '🎵 YouTube Track';
-                // Note: In a real app, you'd need a service to convert YouTube to audio
                 alert('Tính năng YouTube đang phát triển. Vui lòng sử dụng file audio trực tiếp.');
                 return;
             } else if (url.includes('soundcloud.com')) {
@@ -607,127 +989,180 @@
 
         function createMyCharacter() {
             const character = document.createElement('div');
-            character.className = 'character';
+            character.className = 'character standing';
             character.style.left = '50%';
             character.style.top = '50%';
             character.style.transform = 'translate(-50%, -50%)';
             
-            const img = document.createElement('img');
-            const allAvatars = [...avatars.male, ...avatars.female];
-            img.src = allAvatars[gameState.selectedAvatar];
-            character.appendChild(img);
+            const body = document.createElement('div');
+            body.className = 'character-body';
+            character.appendChild(body);
+            
+            // Add status indicator
+            const status = document.createElement('div');
+            status.className = 'character-status';
+            status.textContent = gameState.userName;
+            character.appendChild(status);
             
             character.onclick = () => showProfile();
             
             document.querySelector('.room-container').appendChild(character);
             gameState.myCharacter = character;
+            
+            updateCharacterAppearance();
         }
 
         function addOtherCharacters() {
             // Add some demo characters
             const demoCharacters = [
-                { x: 30, y: 30, avatar: 5, name: 'Minh An', stars: 2 },
-                { x: 70, y: 40, avatar: 12, name: 'Thu Hà', stars: 4 },
-                { x: 20, y: 70, avatar: 8, name: 'Đức Anh', stars: 1 },
-                { x: 80, y: 75, avatar: 15, name: 'Linh Chi', stars: 3 }
+                { x: 20, y: 30, name: 'Minh An', stars: 2, customization: {shirt: 1, pants: 1, shoes: 1, hair: 1, skin: 1} },
+                { x: 80, y: 25, name: 'Thu Hà', stars: 4, customization: {shirt: 2, pants: 2, shoes: 2, hair: 2, skin: 2} },
+                { x: 15, y: 70, name: 'Đức Anh', stars: 1, customization: {shirt: 3, pants: 3, shoes: 3, hair: 3, skin: 3} },
+                { x: 85, y: 75, name: 'Linh Chi', stars: 3, customization: {shirt: 4, pants: 4, shoes: 4, hair: 4, skin: 4} }
             ];
-            
-            const allAvatars = [...avatars.male, ...avatars.female];
             
             demoCharacters.forEach((demo, index) => {
                 const character = document.createElement('div');
-                character.className = 'character';
+                character.className = Math.random() > 0.5 ? 'character sitting meditating' : 'character standing';
                 character.style.left = demo.x + '%';
                 character.style.top = demo.y + '%';
                 
-                const img = document.createElement('img');
-                img.src = allAvatars[demo.avatar];
-                character.appendChild(img);
+                const body = document.createElement('div');
+                body.className = 'character-body';
+                character.appendChild(body);
+                
+                // Add status indicator
+                const status = document.createElement('div');
+                status.className = 'character-status';
+                status.textContent = demo.name;
+                character.appendChild(status);
+                
+                // Generate character appearance
+                const skin = customizationOptions.skin[demo.customization.skin];
+                const shirt = customizationOptions.shirts[demo.customization.shirt];
+                const pants = customizationOptions.pants[demo.customization.pants];
+                const shoes = customizationOptions.shoes[demo.customization.shoes];
+                const hair = customizationOptions.hair[demo.customization.hair];
+                
+                let svgContent;
+                if (character.classList.contains('sitting')) {
+                    svgContent = generateSittingCharacterSVG(skin, shirt, pants, shoes, hair);
+                } else {
+                    svgContent = generateStandingCharacterSVG(skin, shirt, pants, shoes, hair);
+                }
+                
+                body.style.backgroundImage = `url('data:image/svg+xml,${encodeURIComponent(svgContent)}')`;
                 
                 character.onclick = () => showCharacterProfile(demo);
                 
                 document.querySelector('.room-container').appendChild(character);
                 gameState.characters.set(index, { element: character, data: demo });
+                
+                // Random chat for demo characters
+                if (Math.random() > 0.7) {
+                    setTimeout(() => {
+                        const messages = ['Om...', 'Bình an...', '🕉️', 'Thiền định...', 'Hạnh phúc'];
+                        showChatBubble(character, messages[Math.floor(Math.random() * messages.length)]);
+                    }, Math.random() * 5000);
+                }
             });
+        }
+
+        function setupRoomInteraction() {
+            const roomContainer = document.getElementById('roomContainer');
+            
+            roomContainer.addEventListener('click', (e) => {
+                if (gameState.isSitting) return;
+                
+                // Don't move if clicking on character or UI elements
+                if (e.target.closest('.character') || e.target.closest('.controls') || 
+                    e.target.closest('.music-controls') || e.target.closest('.chat-input')) {
+                    return;
+                }
+                
+                const rect = roomContainer.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                
+                moveCharacterTo(x, y);
+                showMoveIndicator(e.clientX - rect.left, e.clientY - rect.top);
+            });
+        }
+
+        function moveCharacterTo(x, y) {
+            if (!gameState.myCharacter || gameState.isSitting) return;
+            
+            // Clamp positions to room boundaries
+            x = Math.max(5, Math.min(95, x));
+            y = Math.max(5, Math.min(95, y));
+            
+            gameState.moveTarget = { x, y };
+            gameState.isMoving = true;
+            gameState.myCharacter.classList.add('walking');
+            
+            // Animate movement
+            gameState.myCharacter.style.transition = 'left 1s ease-out, top 1s ease-out';
+            gameState.myCharacter.style.left = x + '%';
+            gameState.myCharacter.style.top = y + '%';
+            
+            // Stop walking animation after movement
+            setTimeout(() => {
+                gameState.isMoving = false;
+                gameState.myCharacter.classList.remove('walking');
+                gameState.myCharacter.style.transition = '';
+                gameState.moveTarget = null;
+            }, 1000);
+        }
+
+        function showMoveIndicator(x, y) {
+            const indicator = document.createElement('div');
+            indicator.className = 'move-indicator';
+            indicator.style.left = (x - 10) + 'px';
+            indicator.style.top = (y - 10) + 'px';
+            
+            document.querySelector('.room-container').appendChild(indicator);
+            
+            setTimeout(() => {
+                if (indicator.parentNode) {
+                    indicator.remove();
+                }
+            }, 1000);
         }
 
         function sitDown() {
             if (!gameState.isSitting) {
                 gameState.isSitting = true;
-                gameState.myCharacter.classList.add('sitting');
-                gameState.myCharacter.style.pointerEvents = 'none';
+                gameState.myCharacter.classList.remove('standing', 'walking');
+                gameState.myCharacter.classList.add('sitting', 'meditating');
+                updateCharacterAppearance();
+                updateButtonStates();
                 
-                // Disable movement
-                gameState.myCharacter.onmousedown = null;
-                gameState.myCharacter.ontouchstart = null;
+                // Increment meditation counter
+                gameState.meditationDays++;
+                saveUserData();
             }
         }
 
         function standUp() {
             if (gameState.isSitting) {
                 gameState.isSitting = false;
-                gameState.myCharacter.classList.remove('sitting');
-                gameState.myCharacter.style.pointerEvents = 'auto';
-                
-                // Enable movement
-                setupMovement();
+                gameState.myCharacter.classList.remove('sitting', 'meditating');
+                gameState.myCharacter.classList.add('standing');
+                updateCharacterAppearance();
+                updateButtonStates();
             }
         }
 
-        function setupMovement() {
-            let isDragging = false;
-            let startX, startY, initialX, initialY;
+        function updateButtonStates() {
+            const standBtn = document.getElementById('standBtn');
+            const sitBtn = document.getElementById('sitBtn');
             
-            gameState.myCharacter.onmousedown = startDrag;
-            gameState.myCharacter.ontouchstart = startDrag;
-            
-            function startDrag(e) {
-                if (gameState.isSitting) return;
-                
-                isDragging = true;
-                const event = e.type === 'touchstart' ? e.touches[0] : e;
-                startX = event.clientX;
-                startY = event.clientY;
-                
-                const rect = gameState.myCharacter.getBoundingClientRect();
-                initialX = rect.left + rect.width / 2;
-                initialY = rect.top + rect.height / 2;
-                
-                document.onmousemove = drag;
-                document.ontouchmove = drag;
-                document.onmouseup = stopDrag;
-                document.ontouchend = stopDrag;
-                
-                e.preventDefault();
-            }
-            
-            function drag(e) {
-                if (!isDragging || gameState.isSitting) return;
-                
-                const event = e.type === 'touchmove' ? e.touches[0] : e;
-                const deltaX = event.clientX - startX;
-                const deltaY = event.clientY - startY;
-                
-                const newX = ((initialX + deltaX) / window.innerWidth) * 100;
-                const newY = ((initialY + deltaY) / window.innerHeight) * 100;
-                
-                // Keep character within bounds
-                const boundedX = Math.max(5, Math.min(95, newX));
-                const boundedY = Math.max(5, Math.min(95, newY));
-                
-                gameState.myCharacter.style.left = boundedX + '%';
-                gameState.myCharacter.style.top = boundedY + '%';
-                gameState.myCharacter.style.transform = 'translate(-50%, -50%)';
-                
-                e.preventDefault();
-            }
-            
-            function stopDrag() {
-                isDragging = false;
-                document.onmousemove = null;
-                document.ontouchmove = null;
-                document.onmouseup = null;
-                document.ontouchend = null;
+            if (gameState.isSitting) {
+                standBtn.classList.add('active');
+                sitBtn.classList.remove('active');
+            } else {
+                standBtn.classList.remove('active');
+                sitBtn.classList.add('active');
             }
         }
 
@@ -751,20 +1186,24 @@
             const bubble = document.createElement('div');
             bubble.className = 'chat-bubble';
             bubble.textContent = message;
+            
+            // Calculate width based on message length but respect character width
+            const charWidth = character.offsetWidth;
+            bubble.style.maxWidth = charWidth + 'px';
+            bubble.style.minWidth = charWidth + 'px';
+            
             character.appendChild(bubble);
             
             setTimeout(() => {
                 if (bubble.parentNode) {
                     bubble.remove();
                 }
-            }, 3000);
+            }, 5000);
         }
 
         function showProfile() {
             const modal = document.getElementById('profileModal');
-            const allAvatars = [...avatars.male, ...avatars.female];
             
-            document.getElementById('profileAvatar').src = allAvatars[gameState.selectedAvatar];
             document.getElementById('userName').value = gameState.userName;
             
             // Update achievements
@@ -781,6 +1220,9 @@
             
             document.getElementById('achievementText').textContent = achievementText;
             
+            // Update profile avatar
+            updateCharacterAppearance();
+            
             modal.style.display = 'flex';
         }
 
@@ -790,15 +1232,32 @@
 
         function saveProfile() {
             gameState.userName = document.getElementById('userName').value || 'Thiền sinh mới';
+            
+            // Update character status
+            if (gameState.myCharacter) {
+                const status = gameState.myCharacter.querySelector('.character-status');
+                if (status) {
+                    status.textContent = gameState.userName;
+                }
+            }
+            
             saveUserData();
             closeProfile();
         }
 
         function showCharacterProfile(characterData) {
             const modal = document.getElementById('characterModal');
-            const allAvatars = [...avatars.male, ...avatars.female];
             
-            document.getElementById('characterAvatar').src = allAvatars[characterData.avatar];
+            // Generate character appearance for profile
+            const skin = customizationOptions.skin[characterData.customization.skin];
+            const shirt = customizationOptions.shirts[characterData.customization.shirt];
+            const pants = customizationOptions.pants[characterData.customization.pants];
+            const shoes = customizationOptions.shoes[characterData.customization.shoes];
+            const hair = customizationOptions.hair[characterData.customization.hair];
+            
+            const svgContent = generateStandingCharacterSVG(skin, shirt, pants, shoes, hair);
+            document.getElementById('characterAvatar').style.backgroundImage = `url('data:image/svg+xml,${encodeURIComponent(svgContent)}')`;
+            
             document.getElementById('characterName').textContent = characterData.name;
             document.getElementById('characterStars').textContent = '⭐'.repeat(characterData.stars);
             
@@ -885,9 +1344,247 @@
         // Initialize on load
         window.onload = init;
         
-        // Handle resize
+        // Handle resize to maintain 16:9 aspect ratio
         window.onresize = function() {
-            // Room automatically adjusts to viewport size via CSS
+            // CSS handles the responsive aspect ratio automatically
+        };
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 's' || e.key === 'S') {
+                if (gameState.isSitting) {
+                    standUp();
+                } else {
+                    sitDown();
+                }
+            }
+            if (e.key === 'Enter' && document.activeElement.id === 'chatMessage') {
+                sendMessage();
+            }
+        });
+
+        // Add touch support for mobile
+        let touchStartX, touchStartY;
+        
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        });
+        
+        document.addEventListener('touchend', function(e) {
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            
+            // Check if it's a tap (not a swipe)
+            const deltaX = Math.abs(touchEndX - touchStartX);
+            const deltaY = Math.abs(touchEndY - touchStartY);
+            
+            if (deltaX < 10 && deltaY < 10) {
+                // Trigger click event for tap
+                const clickEvent = new MouseEvent('click', {
+                    clientX: touchEndX,
+                    clientY: touchEndY,
+                    bubbles: true
+                });
+                e.target.dispatchEvent(clickEvent);
+            }
+        });
+
+        // Periodic character animations for demo characters
+        setInterval(() => {
+            gameState.characters.forEach((characterObj) => {
+                const character = characterObj.element;
+                
+                // Random chance for demo characters to chat
+                if (Math.random() > 0.95) {
+                    const messages = [
+                        'Om mani padme hum 🕉️', 
+                        'Bình an trong tâm 🙏', 
+                        'Hạnh phúc thật sự ✨',
+                        'Thiền định mỗi ngày 🧘',
+                        'Cảm ơn vũ trụ 🌌',
+                        'Yêu thương vô bờ ❤️'
+                    ];
+                    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                    showChatBubble(character, randomMessage);
+                }
+                
+                // Random chance to change meditation state
+                if (Math.random() > 0.98) {
+                    if (character.classList.contains('sitting')) {
+                        character.classList.remove('sitting', 'meditating');
+                        character.classList.add('standing');
+                    } else {
+                        character.classList.remove('standing');
+                        character.classList.add('sitting', 'meditating');
+                    }
+                }
+            });
+        }, 2000);
+
+        // Auto-save meditation progress
+        setInterval(() => {
+            if (gameState.isSitting) {
+                gameState.meditationDays += 0.01; // Small increment for active meditation
+                
+                // Show meditation benefits occasionally
+                if (Math.random() > 0.95) {
+                    const benefits = [
+                        'Tâm trí đang thư giãn... 😌',
+                        'Căng thẳng đang tan biến... 🌸',
+                        'Năng lượng tích cực tăng... ✨',
+                        'Sự tập trung được cải thiện... 🎯',
+                        'Bình an nội tâm lan tỏa... 🕊️'
+                    ];
+                    showChatBubble(gameState.myCharacter, benefits[Math.floor(Math.random() * benefits.length)]);
+                }
+            }
+        }, 10000); // Every 10 seconds during meditation
+
+        // Easter eggs
+        let konamiCode = [];
+        const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
+        
+        document.addEventListener('keydown', function(e) {
+            konamiCode.push(e.code);
+            if (konamiCode.length > konamiSequence.length) {
+                konamiCode.shift();
+            }
+            
+            if (JSON.stringify(konamiCode) === JSON.stringify(konamiSequence)) {
+                // Easter egg: Enlightenment mode
+                showChatBubble(gameState.myCharacter, '🌟 ENLIGHTENMENT ACHIEVED! 🌟');
+                gameState.myCharacter.style.filter = 'drop-shadow(0 0 30px gold) hue-rotate(45deg)';
+                setTimeout(() => {
+                    gameState.myCharacter.style.filter = '';
+                }, 5000);
+                konamiCode = [];
+            }
+        });
+
+        // Add weather effects occasionally
+        function createWeatherEffect() {
+            if (Math.random() > 0.9) {
+                const effects = ['rain', 'snow', 'petals'];
+                const effect = effects[Math.floor(Math.random() * effects.length)];
+                
+                for (let i = 0; i < 20; i++) {
+                    setTimeout(() => {
+                        createWeatherParticle(effect);
+                    }, i * 100);
+                }
+            }
+        }
+
+        function createWeatherParticle(type) {
+            const particle = document.createElement('div');
+            particle.style.position = 'absolute';
+            particle.style.pointerEvents = 'none';
+            particle.style.zIndex = '2';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = '-10px';
+            
+            switch(type) {
+                case 'rain':
+                    particle.textContent = '💧';
+                    break;
+                case 'snow':
+                    particle.textContent = '❄️';
+                    break;
+                case 'petals':
+                    particle.textContent = '🌸';
+                    break;
+            }
+            
+            particle.style.fontSize = (Math.random() * 10 + 10) + 'px';
+            particle.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+            
+            document.querySelector('.room-container').appendChild(particle);
+            
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.remove();
+                }
+            }, 5000);
+        }
+
+        // Add CSS for weather animations
+        const weatherCSS = `
+            @keyframes fall {
+                to {
+                    transform: translateY(calc(100vh + 50px)) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        
+        const style = document.createElement('style');
+        style.textContent = weatherCSS;
+        document.head.appendChild(style);
+
+        // Start weather effects
+        setInterval(createWeatherEffect, 30000); // Every 30 seconds
+
+        // Performance optimization: Pause animations when tab is not visible
+        document.addEventListener('visibilitychange', function() {
+            const characters = document.querySelectorAll('.character');
+            characters.forEach(char => {
+                if (document.hidden) {
+                    char.style.animationPlayState = 'paused';
+                } else {
+                    char.style.animationPlayState = 'running';
+                }
+            });
+        });
+
+        // Add sound effects for interactions
+        function playSound(type) {
+            // Create audio context for sound effects
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            switch(type) {
+                case 'sit':
+                    oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(220, audioContext.currentTime + 0.5);
+                    break;
+                case 'stand':
+                    oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(440, audioContext.currentTime + 0.3);
+                    break;
+                case 'move':
+                    oscillator.frequency.setValueAtTime(330, audioContext.currentTime);
+                    break;
+            }
+            
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+
+        // Override functions to add sound effects
+        const originalSitDown = sitDown;
+        sitDown = function() {
+            originalSitDown();
+            playSound('sit');
+        };
+
+        const originalStandUp = standUp;
+        standUp = function() {
+            originalStandUp();
+            playSound('stand');
+        };
+
+        const originalMoveCharacterTo = moveCharacterTo;
+        moveCharacterTo = function(x, y) {
+            originalMoveCharacterTo(x, y);
+            playSound('move');
         };
     </script>
 </body>
