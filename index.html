@@ -102,15 +102,29 @@
             background: transparent;
         }
 
+        .character-head {
+            position: absolute;
+            top: 8px;
+            left: 20px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            z-index: 11;
+        }
+
         .character.standing .character-body {
-            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 96"><defs><radialGradient id="aura" cx="50%" cy="50%" r="60%"><stop offset="0%" style="stop-color:rgba(255,215,0,0);stop-opacity:0" /><stop offset="100%" style="stop-color:rgba(255,215,0,0);stop-opacity:0" /></radialGradient></defs><ellipse cx="32" cy="85" rx="15" ry="8" fill="rgba(0,0,0,0.2)"/><circle cx="32" cy="20" r="12" fill="%23fdbcb4" stroke="%23e8a48a" stroke-width="1"/><ellipse cx="29" cy="18" rx="1.5" ry="2" fill="%23333"/><ellipse cx="35" cy="18" rx="1.5" ry="2" fill="%23333"/><ellipse cx="32" cy="22" rx="2" ry="1" fill="%23d2a679"/><path d="M20 15 Q32 8 44 15 Q32 12 20 15" fill="%236b4423"/><rect x="26" y="32" width="12" height="20" rx="6" fill="%234a90e2"/><rect x="24" y="52" width="16" height="24" rx="8" fill="%232c3e50"/><circle cx="22" cy="38" r="3" fill="%23fdbcb4"/><circle cx="42" cy="38" r="3" fill="%23fdbcb4"/><ellipse cx="26" cy="80" rx="4" ry="8" fill="%23654321"/><ellipse cx="38" cy="80" rx="4" ry="8" fill="%23654321"/></svg>');
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 96"><defs><radialGradient id="aura" cx="50%" cy="50%" r="60%"><stop offset="0%" style="stop-color:rgba(255,215,0,0);stop-opacity:0" /><stop offset="100%" style="stop-color:rgba(255,215,0,0);stop-opacity:0" /></radialGradient></defs><ellipse cx="32" cy="85" rx="15" ry="8" fill="rgba(0,0,0,0.2)"/><rect x="26" y="32" width="12" height="20" rx="6" fill="%234a90e2"/><rect x="24" y="52" width="16" height="24" rx="8" fill="%232c3e50"/><rect x="18" y="36" width="6" height="16" rx="3" fill="%23fdbcb4"/><rect x="40" y="36" width="6" height="16" rx="3" fill="%23fdbcb4"/><ellipse cx="26" cy="80" rx="4" ry="8" fill="%23fdbcb4"/><ellipse cx="38" cy="80" rx="4" ry="8" fill="%23fdbcb4"/><ellipse cx="26" cy="88" rx="6" ry="4" fill="%23654321"/><ellipse cx="38" cy="88" rx="6" ry="4" fill="%23654321"/></svg>');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
         }
 
         .character.sitting .character-body {
-            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 96"><defs><radialGradient id="aura" cx="50%" cy="50%" r="80%"><stop offset="0%" style="stop-color:rgba(255,215,0,0.3);stop-opacity:0.6" /><stop offset="100%" style="stop-color:rgba(255,215,0,0);stop-opacity:0" /></radialGradient></defs><circle cx="32" cy="48" r="45" fill="url(%23aura)"/><ellipse cx="32" cy="85" rx="20" ry="10" fill="rgba(0,0,0,0.2)"/><circle cx="32" cy="25" r="12" fill="%23fdbcb4" stroke="%23e8a48a" stroke-width="1"/><ellipse cx="29" cy="23" rx="1" ry="1.5" fill="%23333"/><ellipse cx="35" cy="23" rx="1" ry="1.5" fill="%23333"/><path d="M28 26 Q32 28 36 26" stroke="%23333" stroke-width="1" fill="none"/><path d="M20 18 Q32 12 44 18 Q32 15 20 18" fill="%236b4423"/><rect x="26" y="37" width="12" height="18" rx="6" fill="%234a90e2"/><circle cx="32" cy="65" r="8" fill="%232c3e50"/><circle cx="20" cy="50" r="4" fill="%23fdbcb4"/><circle cx="44" cy="50" r="4" fill="%23fdbcb4"/><ellipse cx="24" cy="72" rx="6" ry="4" fill="%232c3e50"/><ellipse cx="40" cy="72" rx="6" ry="4" fill="%232c3e50"/><circle cx="28" cy="48" r="3" fill="%23fdbcb4"/><circle cx="36" cy="48" r="3" fill="%23fdbcb4"/></svg>');
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 96"><defs><radialGradient id="aura" cx="50%" cy="50%" r="80%"><stop offset="0%" style="stop-color:rgba(255,215,0,0.3);stop-opacity:0.6" /><stop offset="100%" style="stop-color:rgba(255,215,0,0);stop-opacity:0" /></radialGradient></defs><circle cx="32" cy="48" r="45" fill="url(%23aura)"/><ellipse cx="32" cy="85" rx="20" ry="10" fill="rgba(0,0,0,0.2)"/><rect x="26" y="37" width="12" height="18" rx="6" fill="%234a90e2"/><circle cx="32" cy="65" r="8" fill="%232c3e50"/><ellipse cx="24" cy="72" rx="6" ry="4" fill="%232c3e50"/><ellipse cx="40" cy="72" rx="6" ry="4" fill="%232c3e50"/><ellipse cx="22" cy="76" rx="4" ry="3" fill="%23654321"/><ellipse cx="42" cy="76" rx="4" ry="3" fill="%23654321"/><circle cx="28" cy="40" r="6" fill="%23fdbcb4"/><circle cx="36" cy="40" r="6" fill="%23fdbcb4"/></svg>');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -157,37 +171,70 @@
         }
 
         .controls {
-            position: fixed;
-            top: 20px;
-            left: 20px;
+            position: absolute;
+            top: 5%;
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 100;
             display: flex;
-            gap: 10px;
+            gap: 5px;
             flex-wrap: wrap;
+            justify-content: center;
         }
 
         .btn {
-            padding: 12px 18px;
+            padding: 6px 9px;
             background: rgba(255,255,255,0.9);
             border: none;
-            border-radius: 25px;
+            border-radius: 15px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 10px;
             font-weight: bold;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             backdrop-filter: blur(10px);
+            min-width: 40px;
         }
 
         .btn:hover {
             background: rgba(255,255,255,1);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
         }
 
         .btn.active {
             background: #4caf50;
             color: white;
+        }
+
+        .music-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            z-index: 101;
+            transition: all 0.3s ease;
+        }
+
+        .music-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        .music-toggle.open {
+            right: 20px;
+            left: auto;
         }
 
         .music-controls {
@@ -201,51 +248,40 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             backdrop-filter: blur(10px);
             max-width: 300px;
+            display: none;
         }
 
-        .music-list {
-            max-height: 200px;
-            overflow-y: auto;
-            margin-top: 10px;
-        }
-
-        .music-item {
-            padding: 8px;
-            margin: 2px 0;
-            background: rgba(255,255,255,0.7);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 12px;
-        }
-
-        .music-item:hover {
-            background: rgba(255,255,255,1);
-            transform: translateX(5px);
-        }
-
-        .music-item.playing {
-            background: #4caf50;
-            color: white;
+        .music-controls.show {
+            display: block;
         }
 
         .chat-input {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 5%;
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 100;
             display: flex;
             gap: 10px;
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
         }
 
         .chat-input input {
-            padding: 12px 18px;
+            padding: 8px 15px;
             border: none;
-            border-radius: 25px;
-            width: 250px;
-            background: rgba(255,255,255,0.9);
-            font-size: 14px;
+            border-radius: 20px;
+            width: 200px;
+            background: rgba(255,255,255,0.8);
+            font-size: 12px;
             backdrop-filter: blur(10px);
+        }
+
+        .chat-input .btn {
+            padding: 8px 12px;
+            font-size: 11px;
         }
 
         .profile-modal {
@@ -282,6 +318,12 @@
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .profile-avatar:hover {
+            border-color: #4caf50;
         }
 
         .stars {
@@ -290,46 +332,68 @@
             margin: 10px 0;
         }
 
-        .customization-panel {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            margin: 20px 0;
-            text-align: left;
+        .emoji-selector {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 300;
+            align-items: center;
+            justify-content: center;
         }
 
-        .customization-section {
-            background: #f5f5f5;
-            padding: 15px;
-            border-radius: 10px;
+        .emoji-grid {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 400px;
+            max-height: 500px;
+            overflow-y: auto;
         }
 
-        .customization-section h4 {
+        .emoji-category {
+            margin-bottom: 15px;
+        }
+
+        .emoji-category h4 {
             margin-bottom: 10px;
             color: #333;
         }
 
-        .option-grid {
+        .emoji-options {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 5px;
         }
 
-        .option-item {
-            width: 40px;
-            height: 30px;
-            border-radius: 5px;
+        .emoji-option {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            border: 2px solid transparent;
-            transition: border 0.3s ease;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
+            border-radius: 5px;
+            font-size: 20px;
+            transition: background 0.3s ease;
         }
 
-        .option-item:hover, .option-item.selected {
-            border-color: #4caf50;
+        .emoji-option:hover {
+            background: #f0f0f0;
             transform: scale(1.1);
+        }
+
+        .achievement-badge {
+            display: inline-block;
+            background: #4caf50;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            margin: 3px;
         }
 
         .hidden {
@@ -371,39 +435,6 @@
             transform: scale(1.05);
         }
 
-        .achievement-badge {
-            display: inline-block;
-            background: #4caf50;
-            color: white;
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 11px;
-            margin: 3px;
-        }
-
-        .url-input {
-            width: 100%;
-            padding: 8px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-
-        #currentTrack {
-            font-weight: bold;
-            color: #4caf50;
-            margin: 10px 0;
-            font-size: 12px;
-        }
-
-        .volume-control {
-            margin: 10px 0;
-        }
-
-        .volume-control input {
-            width: 100%;
-        }
-
         .character-status {
             position: absolute;
             top: -25px;
@@ -441,15 +472,22 @@
             }
         }
 
+        @keyframes fall {
+            to {
+                transform: translateY(calc(100vh + 50px)) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
         @media (max-width: 768px) {
             .controls {
-                flex-direction: column;
-                gap: 5px;
+                gap: 3px;
             }
             
             .btn {
-                padding: 10px 15px;
-                font-size: 12px;
+                padding: 5px 8px;
+                font-size: 9px;
+                min-width: 35px;
             }
             
             .music-controls {
@@ -458,8 +496,32 @@
             }
             
             .chat-input input {
-                width: 180px;
-                padding: 10px 15px;
+                width: 150px;
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+
+            .chat-input .btn {
+                padding: 6px 10px;
+                font-size: 10px;
+            }
+
+            .music-toggle {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+        }
+
+        @media (orientation: portrait) {
+            .controls {
+                top: 3%;
+            }
+            
+            .btn {
+                padding: 4px 7px;
+                font-size: 8px;
+                min-width: 30px;
             }
         }
     </style>
@@ -475,18 +537,16 @@
             <button class="btn" onclick="showBackgroundSelector()">🎨 Đổi nền</button>
         </div>
 
-        <div class="music-controls">
+        <button class="music-toggle" id="musicToggle" onclick="toggleMusicPanel()">♪</button>
+
+        <div class="music-controls" id="musicControls">
             <h4>🎵 Nhạc thiền</h4>
-            <div id="currentTrack">Chưa phát nhạc</div>
-            <div class="volume-control">
-                <label>Âm lượng: </label>
-                <input type="range" id="volumeSlider" min="0" max="100" value="50" onchange="setVolume(this.value)">
-            </div>
-            <input type="text" id="musicUrl" placeholder="Dán URL YouTube/SoundCloud/Spotify" class="url-input">
-            <button class="btn" onclick="addMusicFromUrl()">Thêm nhạc</button>
-            <input type="file" id="musicUpload" accept="audio/*" style="display:none" onchange="uploadMusic(event)">
-            <button class="btn" onclick="document.getElementById('musicUpload').click()">Upload nhạc</button>
-            <div class="music-list" id="musicList"></div>
+            <iframe id="ytplayer" type="text/html" width="1" height="0.5625"
+                src="https://www.youtube.com/embed/M7lc1UVf-VE?autoplay=1&controls=0&loop=1"
+                frameborder="0" allowfullscreen style="display: none;"></iframe>
+            <input type="text" id="youtubeEmbed" placeholder="Dán mã embed YouTube" 
+                style="width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px;">
+            <button class="btn" onclick="updateYouTubeEmbed()" style="width: 100%; margin: 5px 0;">🎵 Cập nhật nhạc</button>
         </div>
 
         <div class="chat-input">
@@ -499,7 +559,9 @@
     <div class="profile-modal" id="profileModal">
         <div class="profile-content">
             <h3>Profile thiền sinh</h3>
-            <div class="profile-avatar" id="profileAvatar"></div>
+            <div class="profile-avatar" id="profileAvatar" onclick="showEmojiSelector()">
+                <div class="character-head" id="profileHead">😊</div>
+            </div>
             <input type="text" id="userName" placeholder="Tên của bạn" style="width:100%; padding:10px; margin:10px 0; border:1px solid #ddd; border-radius:8px;">
             
             <div class="stars" id="achievementStars">⭐⭐⭐</div>
@@ -508,33 +570,6 @@
             <div class="achievement-badge">Người mới</div>
             <div class="achievement-badge">Kiên trì 1 tuần</div>
             <div class="achievement-badge">Thiền sư nhỏ</div>
-
-            <div class="customization-panel">
-                <div class="customization-section">
-                    <h4>👕 Áo:</h4>
-                    <div class="option-grid" id="shirtOptions"></div>
-                </div>
-                
-                <div class="customization-section">
-                    <h4>👖 Quần:</h4>
-                    <div class="option-grid" id="pantsOptions"></div>
-                </div>
-                
-                <div class="customization-section">
-                    <h4>👟 Giày:</h4>
-                    <div class="option-grid" id="shoesOptions"></div>
-                </div>
-                
-                <div class="customization-section">
-                    <h4>💇 Tóc:</h4>
-                    <div class="option-grid" id="hairOptions"></div>
-                </div>
-                
-                <div class="customization-section">
-                    <h4>🎨 Màu da:</h4>
-                    <div class="option-grid" id="skinOptions"></div>
-                </div>
-            </div>
             
             <div style="margin-top: 20px;">
                 <button class="btn" onclick="saveProfile()">💾 Lưu</button>
@@ -546,7 +581,9 @@
     <!-- Character Profile Modal -->
     <div class="profile-modal" id="characterModal">
         <div class="profile-content">
-            <div class="profile-avatar" id="characterAvatar"></div>
+            <div class="profile-avatar" id="characterAvatar">
+                <div class="character-head" id="characterHead">😊</div>
+            </div>
             <h3 id="characterName">Tên nhân vật</h3>
             <div class="stars" id="characterStars">⭐⭐</div>
             <p id="characterBio">Thiền sinh mới bắt đầu hành trình tìm hiểu bản thân.</p>
@@ -577,45 +614,49 @@
         </div>
     </div>
 
-    <audio id="meditationAudio" loop></audio>
+    <!-- Emoji Selector -->
+    <div class="emoji-selector" id="emojiSelector">
+        <div class="emoji-grid">
+            <h3>Chọn avatar emoji</h3>
+            
+            <div class="emoji-category">
+                <h4>👨‍👩‍👧‍👦 Người</h4>
+                <div class="emoji-options" id="peopleEmojis"></div>
+            </div>
+            
+            <div class="emoji-category">
+                <h4>😊 Biểu cảm</h4>
+                <div class="emoji-options" id="emotionEmojis"></div>
+            </div>
+            
+            <div class="emoji-category">
+                <h4>🧘 Thiền định</h4>
+                <div class="emoji-options" id="meditationEmojis"></div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <button class="btn" onclick="closeEmojiSelector()">❌ Đóng</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Character customization options
-        const customizationOptions = {
-            shirts: [
-                { color: '#4a90e2', pattern: 'solid' },
-                { color: '#e74c3c', pattern: 'solid' },
-                { color: '#27ae60', pattern: 'solid' },
-                { color: '#f39c12', pattern: 'solid' },
-                { color: '#9b59b6', pattern: 'solid' }
+        // Emoji collections
+        const emojiCollections = {
+            people: [
+                '👤', '👥', '👨', '👩', '🧑', '👴', '👵', '👶', '👦', '👧',
+                '👨‍🦳', '👩‍🦳', '👨‍🦲', '👩‍🦲', '👨‍🦱', '👩‍🦱', '👨‍🦰', '👩‍🦰',
+                '👱‍♂️', '👱‍♀️', '🧔', '👨‍⚕️', '👩‍⚕️', '👨‍🎓', '👩‍🎓', '👨‍🏫', '👩‍🏫',
+                '👨‍💼', '👩‍💼', '👨‍🔬', '👩‍🔬', '👨‍💻', '👩‍💻', '👨‍🎨', '👩‍🎨'
             ],
-            pants: [
-                { color: '#2c3e50', pattern: 'solid' },
-                { color: '#34495e', pattern: 'solid' },
-                { color: '#8b4513', pattern: 'solid' },
-                { color: '#556b2f', pattern: 'solid' },
-                { color: '#483d8b', pattern: 'solid' }
+            emotions: [
+                '😊', '😌', '😍', '🥰', '😘', '😗', '☺️', '😚', '😙', '🤗',
+                '🤔', '🤫', '🤭', '🧐', '😎', '🤓', '😇', '😴', '😪', '🤤',
+                '😋', '😛', '😜', '🤪', '😝', '🤑', '🤗', '🤭', '🤫', '🤔'
             ],
-            shoes: [
-                { color: '#654321', type: 'boots' },
-                { color: '#2c3e50', type: 'sneakers' },
-                { color: '#8b4513', type: 'sandals' },
-                { color: '#000000', type: 'formal' },
-                { color: '#ffffff', type: 'canvas' }
-            ],
-            hair: [
-                { color: '#6b4423', style: 'short' },
-                { color: '#000000', style: 'long' },
-                { color: '#d2691e', style: 'wavy' },
-                { color: '#ffd54f', style: 'curly' },
-                { color: '#8b4513', style: 'braided' }
-            ],
-            skin: [
-                { tone: '#fdbcb4', name: 'Light' },
-                { tone: '#f1c27d', name: 'Medium' },
-                { tone: '#d08b5b', name: 'Tan' },
-                { tone: '#8d5524', name: 'Brown' },
-                { tone: '#654321', name: 'Dark' }
+            meditation: [
+                '🧘', '🧘‍♂️', '🧘‍♀️', '🕉️', '☯️', '🙏', '🤲', '👐', '🙌', '✨',
+                '🌸', '🌺', '🌻', '🌼', '🌷', '🪷', '🍃', '☘️', '🌿', '🌱'
             ]
         };
 
@@ -625,35 +666,19 @@
             myCharacter: null,
             isMoving: false,
             isSitting: false,
-            currentMusic: null,
-            musicList: [],
             userName: '',
             meditationDays: 0,
             joinDate: new Date(),
             currentBackground: 'garden',
-            customization: {
-                shirt: 0,
-                pants: 0,
-                shoes: 0,
-                hair: 0,
-                skin: 0
-            },
-            moveTarget: null
+            selectedEmoji: '😊',
+            moveTarget: null,
+            musicPanelOpen: false
         };
-
-        // Default meditation tracks
-        const defaultTracks = [
-            { name: '🌊 Sóng biển nhẹ nhàng', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmI3CjSW2e/Hci...' },
-            { name: '🎋 Tiếng chim rừng', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmI3CjSW2e/Hci...' },
-            { name: '☯ Chuông Tây Tạng', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmI3CjSW2e/Hci...' },
-            { name: '🧘 Âm Om thiền định', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmI3CjSW2e/Hci...' }
-        ];
 
         // Initialize
         function init() {
             loadUserData();
-            setupCustomizationOptions();
-            setupMusicList();
+            setupEmojiSelector();
             setupBackgroundOptions();
             createMyCharacter();
             addOtherCharacters();
@@ -672,9 +697,7 @@
             gameState.joinDate = new Date(data.joinDate || Date.now());
             gameState.meditationDays = data.meditationDays || 0;
             gameState.currentBackground = data.currentBackground || 'garden';
-            gameState.customization = data.customization || {
-                shirt: 0, pants: 0, shoes: 0, hair: 0, skin: 0
-            };
+            gameState.selectedEmoji = data.selectedEmoji || '😊';
             
             // Calculate achievement days
             const daysDiff = Math.floor((Date.now() - gameState.joinDate.getTime()) / (1000 * 60 * 60 * 24));
@@ -689,302 +712,123 @@
                 joinDate: gameState.joinDate.toISOString(),
                 meditationDays: gameState.meditationDays,
                 currentBackground: gameState.currentBackground,
-                customization: gameState.customization
+                selectedEmoji: gameState.selectedEmoji
             };
             localStorage.setItem('meditationRoomV3', JSON.stringify(data));
         }
 
-        function setupCustomizationOptions() {
-            // Setup shirt options
-            const shirtContainer = document.getElementById('shirtOptions');
-            customizationOptions.shirts.forEach((shirt, index) => {
+        function setupEmojiSelector() {
+            // Setup people emojis
+            const peopleContainer = document.getElementById('peopleEmojis');
+            emojiCollections.people.forEach(emoji => {
                 const option = document.createElement('div');
-                option.className = 'option-item';
-                option.style.backgroundColor = shirt.color;
-                option.onclick = () => selectCustomization('shirt', index);
-                if (index === gameState.customization.shirt) {
-                    option.classList.add('selected');
-                }
-                shirtContainer.appendChild(option);
+                option.className = 'emoji-option';
+                option.textContent = emoji;
+                option.onclick = () => selectEmoji(emoji);
+                peopleContainer.appendChild(option);
             });
 
-            // Setup pants options
-            const pantsContainer = document.getElementById('pantsOptions');
-            customizationOptions.pants.forEach((pants, index) => {
+            // Setup emotion emojis
+            const emotionContainer = document.getElementById('emotionEmojis');
+            emojiCollections.emotions.forEach(emoji => {
                 const option = document.createElement('div');
-                option.className = 'option-item';
-                option.style.backgroundColor = pants.color;
-                option.onclick = () => selectCustomization('pants', index);
-                if (index === gameState.customization.pants) {
-                    option.classList.add('selected');
-                }
-                pantsContainer.appendChild(option);
+                option.className = 'emoji-option';
+                option.textContent = emoji;
+                option.onclick = () => selectEmoji(emoji);
+                emotionContainer.appendChild(option);
             });
 
-            // Setup shoes options
-            const shoesContainer = document.getElementById('shoesOptions');
-            customizationOptions.shoes.forEach((shoes, index) => {
+            // Setup meditation emojis
+            const meditationContainer = document.getElementById('meditationEmojis');
+            emojiCollections.meditation.forEach(emoji => {
                 const option = document.createElement('div');
-                option.className = 'option-item';
-                option.style.backgroundColor = shoes.color;
-                option.onclick = () => selectCustomization('shoes', index);
-                if (index === gameState.customization.shoes) {
-                    option.classList.add('selected');
-                }
-                shoesContainer.appendChild(option);
-            });
-
-            // Setup hair options
-            const hairContainer = document.getElementById('hairOptions');
-            customizationOptions.hair.forEach((hair, index) => {
-                const option = document.createElement('div');
-                option.className = 'option-item';
-                option.style.backgroundColor = hair.color;
-                option.onclick = () => selectCustomization('hair', index);
-                if (index === gameState.customization.hair) {
-                    option.classList.add('selected');
-                }
-                hairContainer.appendChild(option);
-            });
-
-            // Setup skin options
-            const skinContainer = document.getElementById('skinOptions');
-            customizationOptions.skin.forEach((skin, index) => {
-                const option = document.createElement('div');
-                option.className = 'option-item';
-                option.style.backgroundColor = skin.tone;
-                option.onclick = () => selectCustomization('skin', index);
-                if (index === gameState.customization.skin) {
-                    option.classList.add('selected');
-                }
-                skinContainer.appendChild(option);
+                option.className = 'emoji-option';
+                option.textContent = emoji;
+                option.onclick = () => selectEmoji(emoji);
+                meditationContainer.appendChild(option);
             });
         }
 
-        function selectCustomization(type, index) {
-            gameState.customization[type] = index;
-            
-            // Update UI
-            document.querySelectorAll(`#${type}Options .option-item`).forEach((el, i) => {
-                el.classList.toggle('selected', i === index);
-            });
-            
-            // Update character appearance
-            updateCharacterAppearance();
+        function selectEmoji(emoji) {
+            gameState.selectedEmoji = emoji;
+            updateCharacterHead();
+            closeEmojiSelector();
         }
 
-        function updateCharacterAppearance() {
-            if (!gameState.myCharacter) return;
-            
-            const customization = gameState.customization;
-            const shirt = customizationOptions.shirts[customization.shirt];
-            const pants = customizationOptions.pants[customization.pants];
-            const shoes = customizationOptions.shoes[customization.shoes];
-            const hair = customizationOptions.hair[customization.hair];
-            const skin = customizationOptions.skin[customization.skin];
-            
-            // Generate custom SVG based on current state
-            let svgContent;
-            
-            if (gameState.isSitting) {
-                svgContent = generateSittingCharacterSVG(skin, shirt, pants, shoes, hair);
-                gameState.myCharacter.className = 'character sitting meditating';
-            } else {
-                svgContent = generateStandingCharacterSVG(skin, shirt, pants, shoes, hair);
-                gameState.myCharacter.className = 'character standing';
+        function showEmojiSelector() {
+            document.getElementById('emojiSelector').style.display = 'flex';
+        }
+
+        function closeEmojiSelector() {
+            document.getElementById('emojiSelector').style.display = 'none';
+        }
+
+        function updateCharacterHead() {
+            if (gameState.myCharacter) {
+                const head = gameState.myCharacter.querySelector('.character-head');
+                if (head) {
+                    head.textContent = gameState.selectedEmoji;
+                }
             }
-            
-            gameState.myCharacter.querySelector('.character-body').style.backgroundImage = `url('data:image/svg+xml,${encodeURIComponent(svgContent)}')`;
-            
+
             // Update profile avatar
-            const profileAvatar = document.getElementById('profileAvatar');
-            if (profileAvatar) {
-                profileAvatar.style.backgroundImage = `url('data:image/svg+xml,${encodeURIComponent(svgContent)}')`;
+            const profileHead = document.getElementById('profileHead');
+            if (profileHead) {
+                profileHead.textContent = gameState.selectedEmoji;
             }
         }
 
-        function generateStandingCharacterSVG(skin, shirt, pants, shoes, hair) {
-            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 96">
-                <defs>
-                    <radialGradient id="aura" cx="50%" cy="50%" r="60%">
-                        <stop offset="0%" style="stop-color:rgba(255,215,0,0);stop-opacity:0" />
-                        <stop offset="100%" style="stop-color:rgba(255,215,0,0);stop-opacity:0" />
-                    </radialGradient>
-                </defs>
-                <!-- Shadow -->
-                <ellipse cx="32" cy="90" rx="15" ry="6" fill="rgba(0,0,0,0.2)"/>
-                
-                <!-- Head -->
-                <circle cx="32" cy="20" r="12" fill="${skin.tone}" stroke="#e8a48a" stroke-width="1"/>
-                
-                <!-- Eyes -->
-                <ellipse cx="29" cy="18" rx="1.5" ry="2" fill="#333"/>
-                <ellipse cx="35" cy="18" rx="1.5" ry="2" fill="#333"/>
-                
-                <!-- Nose -->
-                <ellipse cx="32" cy="22" rx="2" ry="1" fill="#d2a679"/>
-                
-                <!-- Hair -->
-                <path d="M20 15 Q32 8 44 15 Q32 12 20 15" fill="${hair.color}"/>
-                
-                <!-- Shirt -->
-                <rect x="26" y="32" width="12" height="20" rx="6" fill="${shirt.color}"/>
-                
-                <!-- Pants -->
-                <rect x="24" y="52" width="16" height="24" rx="8" fill="${pants.color}"/>
-                
-                <!-- Arms -->
-                <circle cx="22" cy="38" r="3" fill="${skin.tone}"/>
-                <circle cx="42" cy="38" r="3" fill="${skin.tone}"/>
-                
-                <!-- Legs -->
-                <ellipse cx="28" cy="80" rx="4" ry="8" fill="${skin.tone}"/>
-                <ellipse cx="36" cy="80" rx="4" ry="8" fill="${skin.tone}"/>
-                
-                <!-- Shoes -->
-                <ellipse cx="26" cy="88" rx="6" ry="4" fill="${shoes.color}"/>
-                <ellipse cx="38" cy="88" rx="6" ry="4" fill="${shoes.color}"/>
-            </svg>`;
-        }
-
-        function generateSittingCharacterSVG(skin, shirt, pants, shoes, hair) {
-            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 96">
-                <defs>
-                    <radialGradient id="aura" cx="50%" cy="50%" r="80%">
-                        <stop offset="0%" style="stop-color:rgba(255,215,0,0.3);stop-opacity:0.6" />
-                        <stop offset="100%" style="stop-color:rgba(255,215,0,0);stop-opacity:0" />
-                    </radialGradient>
-                </defs>
-                
-                <!-- Meditation Aura -->
-                <circle cx="32" cy="48" r="45" fill="url(#aura)"/>
-                
-                <!-- Shadow -->
-                <ellipse cx="32" cy="85" rx="20" ry="10" fill="rgba(0,0,0,0.2)"/>
-                
-                <!-- Head -->
-                <circle cx="32" cy="25" r="12" fill="${skin.tone}" stroke="#e8a48a" stroke-width="1"/>
-                
-                <!-- Closed Eyes (meditation) -->
-                <ellipse cx="29" cy="23" rx="1" ry="0.5" fill="#333"/>
-                <ellipse cx="35" cy="23" rx="1" ry="0.5" fill="#333"/>
-                
-                <!-- Peaceful smile -->
-                <path d="M28 26 Q32 28 36 26" stroke="#333" stroke-width="1" fill="none"/>
-                
-                <!-- Hair -->
-                <path d="M20 18 Q32 12 44 18 Q32 15 20 18" fill="${hair.color}"/>
-                
-                <!-- Shirt -->
-                <rect x="26" y="37" width="12" height="18" rx="6" fill="${shirt.color}"/>
-                
-                <!-- Sitting position - lotus pose -->
-                <circle cx="32" cy="65" r="8" fill="${pants.color}"/>
-                
-                <!-- Meditation hands -->
-                <circle cx="20" cy="50" r="4" fill="${skin.tone}"/>
-                <circle cx="44" cy="50" r="4" fill="${skin.tone}"/>
-                
-                <!-- Crossed legs -->
-                <ellipse cx="24" cy="72" rx="6" ry="4" fill="${pants.color}"/>
-                <ellipse cx="40" cy="72" rx="6" ry="4" fill="${pants.color}"/>
-                
-                <!-- Prayer hands -->
-                <circle cx="28" cy="48" r="3" fill="${skin.tone}"/>
-                <circle cx="36" cy="48" r="3" fill="${skin.tone}"/>
-                
-                <!-- Feet -->
-                <ellipse cx="22" cy="76" rx="4" ry="3" fill="${shoes.color}"/>
-                <ellipse cx="42" cy="76" rx="4" ry="3" fill="${shoes.color}"/>
-            </svg>`;
-        }
-
-        function setupMusicList() {
-            gameState.musicList = [...defaultTracks];
-            updateMusicList();
-        }
-
-        function updateMusicList() {
-            const list = document.getElementById('musicList');
-            list.innerHTML = '';
+        function toggleMusicPanel() {
+            const panel = document.getElementById('musicControls');
+            const toggle = document.getElementById('musicToggle');
             
-            gameState.musicList.forEach((track, index) => {
-                const item = document.createElement('div');
-                item.className = 'music-item';
-                item.textContent = track.name;
-                item.onclick = () => playMusic(index);
-                if (gameState.currentMusic === index) {
-                    item.classList.add('playing');
-                }
-                list.appendChild(item);
-            });
-        }
-
-        function playMusic(index) {
-            const audio = document.getElementById('meditationAudio');
-            const track = gameState.musicList[index];
+            gameState.musicPanelOpen = !gameState.musicPanelOpen;
             
-            if (gameState.currentMusic === index && !audio.paused) {
-                audio.pause();
-                gameState.currentMusic = null;
-                document.getElementById('currentTrack').textContent = 'Đã dừng';
+            if (gameState.musicPanelOpen) {
+                panel.classList.add('show');
+                toggle.classList.add('open');
+                toggle.textContent = '✖';
             } else {
-                audio.src = track.url;
-                audio.play().catch(e => {
-                    console.log('Cannot play audio:', e);
-                });
-                gameState.currentMusic = index;
-                document.getElementById('currentTrack').textContent = `Đang phát: ${track.name}`;
+                panel.classList.remove('show');
+                toggle.classList.remove('open');
+                toggle.textContent = '♪';
             }
-            updateMusicList();
         }
 
-        function addMusicFromUrl() {
-            const urlInput = document.getElementById('musicUrl');
-            const url = urlInput.value.trim();
+        function updateYouTubeEmbed() {
+            const embedInput = document.getElementById('youtubeEmbed');
+            const iframe = document.getElementById('ytplayer');
+            const embedCode = embedInput.value.trim();
             
-            if (!url) return;
-            
-            // Extract video ID from YouTube URL
-            let audioUrl = url;
-            let trackName = 'Nhạc tùy chỉnh';
-            
-            if (url.includes('youtube.com') || url.includes('youtu.be')) {
-                trackName = '🎵 YouTube Track';
-                alert('Tính năng YouTube đang phát triển. Vui lòng sử dụng file audio trực tiếp.');
-                return;
-            } else if (url.includes('soundcloud.com')) {
-                trackName = '🎧 SoundCloud Track';
-                alert('Tính năng SoundCloud đang phát triển. Vui lòng sử dụng file audio trực tiếp.');
-                return;
-            } else if (url.includes('spotify.com')) {
-                trackName = '🎶 Spotify Track';
-                alert('Tính năng Spotify đang phát triển. Vui lòng sử dụng file audio trực tiếp.');
-                return;
+            if (embedCode) {
+                // Extract YouTube URL from embed code or direct URL
+                let videoUrl = embedCode;
+                
+                // If it's a full embed code, extract the src
+                if (embedCode.includes('<iframe')) {
+                    const srcMatch = embedCode.match(/src="([^"]+)"/);
+                    if (srcMatch) {
+                        videoUrl = srcMatch[1];
+                    }
+                }
+                
+                // If it's a YouTube watch URL, convert to embed
+                if (videoUrl.includes('youtube.com/watch')) {
+                    const videoId = videoUrl.match(/v=([^&]+)/);
+                    if (videoId) {
+                        videoUrl = `https://www.youtube.com/embed/${videoId[1]}?autoplay=1&controls=0&loop=1`;
+                    }
+                } else if (videoUrl.includes('youtu.be/')) {
+                    const videoId = videoUrl.split('youtu.be/')[1].split('?')[0];
+                    videoUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&loop=1`;
+                }
+                
+                iframe.src = videoUrl;
+                embedInput.value = '';
+                
+                // Show success message
+                showChatBubble(gameState.myCharacter, '🎵 Đã cập nhật nhạc!');
             }
-            
-            gameState.musicList.push({ name: trackName, url: audioUrl });
-            updateMusicList();
-            urlInput.value = '';
-        }
-
-        function uploadMusic(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const audioUrl = e.target.result;
-                const trackName = `🎵 ${file.name}`;
-                gameState.musicList.push({ name: trackName, url: audioUrl });
-                updateMusicList();
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function setVolume(value) {
-            const audio = document.getElementById('meditationAudio');
-            audio.volume = value / 100;
         }
 
         function createMyCharacter() {
@@ -998,6 +842,12 @@
             body.className = 'character-body';
             character.appendChild(body);
             
+            // Add emoji head
+            const head = document.createElement('div');
+            head.className = 'character-head';
+            head.textContent = gameState.selectedEmoji;
+            character.appendChild(head);
+            
             // Add status indicator
             const status = document.createElement('div');
             status.className = 'character-status';
@@ -1008,17 +858,15 @@
             
             document.querySelector('.room-container').appendChild(character);
             gameState.myCharacter = character;
-            
-            updateCharacterAppearance();
         }
 
         function addOtherCharacters() {
             // Add some demo characters
             const demoCharacters = [
-                { x: 20, y: 30, name: 'Minh An', stars: 2, customization: {shirt: 1, pants: 1, shoes: 1, hair: 1, skin: 1} },
-                { x: 80, y: 25, name: 'Thu Hà', stars: 4, customization: {shirt: 2, pants: 2, shoes: 2, hair: 2, skin: 2} },
-                { x: 15, y: 70, name: 'Đức Anh', stars: 1, customization: {shirt: 3, pants: 3, shoes: 3, hair: 3, skin: 3} },
-                { x: 85, y: 75, name: 'Linh Chi', stars: 3, customization: {shirt: 4, pants: 4, shoes: 4, hair: 4, skin: 4} }
+                { x: 20, y: 30, name: 'Minh An', stars: 2, emoji: '👨' },
+                { x: 80, y: 25, name: 'Thu Hà', stars: 4, emoji: '👩' },
+                { x: 15, y: 70, name: 'Đức Anh', stars: 1, emoji: '🧑' },
+                { x: 85, y: 75, name: 'Linh Chi', stars: 3, emoji: '👩‍🦳' }
             ];
             
             demoCharacters.forEach((demo, index) => {
@@ -1031,27 +879,17 @@
                 body.className = 'character-body';
                 character.appendChild(body);
                 
+                // Add emoji head
+                const head = document.createElement('div');
+                head.className = 'character-head';
+                head.textContent = demo.emoji;
+                character.appendChild(head);
+                
                 // Add status indicator
                 const status = document.createElement('div');
                 status.className = 'character-status';
                 status.textContent = demo.name;
                 character.appendChild(status);
-                
-                // Generate character appearance
-                const skin = customizationOptions.skin[demo.customization.skin];
-                const shirt = customizationOptions.shirts[demo.customization.shirt];
-                const pants = customizationOptions.pants[demo.customization.pants];
-                const shoes = customizationOptions.shoes[demo.customization.shoes];
-                const hair = customizationOptions.hair[demo.customization.hair];
-                
-                let svgContent;
-                if (character.classList.contains('sitting')) {
-                    svgContent = generateSittingCharacterSVG(skin, shirt, pants, shoes, hair);
-                } else {
-                    svgContent = generateStandingCharacterSVG(skin, shirt, pants, shoes, hair);
-                }
-                
-                body.style.backgroundImage = `url('data:image/svg+xml,${encodeURIComponent(svgContent)}')`;
                 
                 character.onclick = () => showCharacterProfile(demo);
                 
@@ -1076,7 +914,8 @@
                 
                 // Don't move if clicking on character or UI elements
                 if (e.target.closest('.character') || e.target.closest('.controls') || 
-                    e.target.closest('.music-controls') || e.target.closest('.chat-input')) {
+                    e.target.closest('.music-controls') || e.target.closest('.chat-input') ||
+                    e.target.closest('.music-toggle')) {
                     return;
                 }
                 
@@ -1094,7 +933,7 @@
             
             // Clamp positions to room boundaries
             x = Math.max(5, Math.min(95, x));
-            y = Math.max(5, Math.min(95, y));
+            y = Math.max(10, Math.min(90, y));
             
             gameState.moveTarget = { x, y };
             gameState.isMoving = true;
@@ -1134,12 +973,13 @@
                 gameState.isSitting = true;
                 gameState.myCharacter.classList.remove('standing', 'walking');
                 gameState.myCharacter.classList.add('sitting', 'meditating');
-                updateCharacterAppearance();
                 updateButtonStates();
                 
                 // Increment meditation counter
                 gameState.meditationDays++;
                 saveUserData();
+                
+                playSound('sit');
             }
         }
 
@@ -1148,8 +988,9 @@
                 gameState.isSitting = false;
                 gameState.myCharacter.classList.remove('sitting', 'meditating');
                 gameState.myCharacter.classList.add('standing');
-                updateCharacterAppearance();
                 updateButtonStates();
+                
+                playSound('stand');
             }
         }
 
@@ -1158,11 +999,11 @@
             const sitBtn = document.getElementById('sitBtn');
             
             if (gameState.isSitting) {
-                standBtn.classList.add('active');
-                sitBtn.classList.remove('active');
-            } else {
                 standBtn.classList.remove('active');
                 sitBtn.classList.add('active');
+            } else {
+                standBtn.classList.add('active');
+                sitBtn.classList.remove('active');
             }
         }
 
@@ -1220,8 +1061,8 @@
             
             document.getElementById('achievementText').textContent = achievementText;
             
-            // Update profile avatar
-            updateCharacterAppearance();
+            // Update profile avatar head
+            updateCharacterHead();
             
             modal.style.display = 'flex';
         }
@@ -1248,16 +1089,7 @@
         function showCharacterProfile(characterData) {
             const modal = document.getElementById('characterModal');
             
-            // Generate character appearance for profile
-            const skin = customizationOptions.skin[characterData.customization.skin];
-            const shirt = customizationOptions.shirts[characterData.customization.shirt];
-            const pants = customizationOptions.pants[characterData.customization.pants];
-            const shoes = customizationOptions.shoes[characterData.customization.shoes];
-            const hair = customizationOptions.hair[characterData.customization.hair];
-            
-            const svgContent = generateStandingCharacterSVG(skin, shirt, pants, shoes, hair);
-            document.getElementById('characterAvatar').style.backgroundImage = `url('data:image/svg+xml,${encodeURIComponent(svgContent)}')`;
-            
+            document.getElementById('characterHead').textContent = characterData.emoji;
             document.getElementById('characterName').textContent = characterData.name;
             document.getElementById('characterStars').textContent = '⭐'.repeat(characterData.stars);
             
@@ -1341,13 +1173,42 @@
             closeBackgroundSelector();
         }
 
+        // Add sound effects for interactions
+        function playSound(type) {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                switch(type) {
+                    case 'sit':
+                        oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(220, audioContext.currentTime + 0.5);
+                        break;
+                    case 'stand':
+                        oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(440, audioContext.currentTime + 0.3);
+                        break;
+                    case 'move':
+                        oscillator.frequency.setValueAtTime(330, audioContext.currentTime);
+                        break;
+                }
+                
+                gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.5);
+            } catch(e) {
+                // Sound not supported, silently continue
+            }
+        }
+
         // Initialize on load
         window.onload = init;
-        
-        // Handle resize to maintain 16:9 aspect ratio
-        window.onresize = function() {
-            // CSS handles the responsive aspect ratio automatically
-        };
 
         // Add keyboard shortcuts
         document.addEventListener('keydown', function(e) {
@@ -1360,6 +1221,9 @@
             }
             if (e.key === 'Enter' && document.activeElement.id === 'chatMessage') {
                 sendMessage();
+            }
+            if (e.key === 'm' || e.key === 'M') {
+                toggleMusicPanel();
             }
         });
 
@@ -1425,10 +1289,10 @@
         // Auto-save meditation progress
         setInterval(() => {
             if (gameState.isSitting) {
-                gameState.meditationDays += 0.01; // Small increment for active meditation
+                gameState.meditationDays += 0.01;
                 
                 // Show meditation benefits occasionally
-                if (Math.random() > 0.95) {
+                if (Math.random() > 0.97) {
                     const benefits = [
                         'Tâm trí đang thư giãn... 😌',
                         'Căng thẳng đang tan biến... 🌸',
@@ -1439,64 +1303,31 @@
                     showChatBubble(gameState.myCharacter, benefits[Math.floor(Math.random() * benefits.length)]);
                 }
             }
-        }, 10000); // Every 10 seconds during meditation
+        }, 10000);
 
-        // Easter eggs
-        let konamiCode = [];
-        const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
-        
-        document.addEventListener('keydown', function(e) {
-            konamiCode.push(e.code);
-            if (konamiCode.length > konamiSequence.length) {
-                konamiCode.shift();
-            }
-            
-            if (JSON.stringify(konamiCode) === JSON.stringify(konamiSequence)) {
-                // Easter egg: Enlightenment mode
-                showChatBubble(gameState.myCharacter, '🌟 ENLIGHTENMENT ACHIEVED! 🌟');
-                gameState.myCharacter.style.filter = 'drop-shadow(0 0 30px gold) hue-rotate(45deg)';
-                setTimeout(() => {
-                    gameState.myCharacter.style.filter = '';
-                }, 5000);
-                konamiCode = [];
-            }
-        });
-
-        // Add weather effects occasionally
+        // Weather effects
         function createWeatherEffect() {
             if (Math.random() > 0.9) {
-                const effects = ['rain', 'snow', 'petals'];
+                const effects = ['🌸', '❄️', '💧'];
                 const effect = effects[Math.floor(Math.random() * effects.length)];
                 
-                for (let i = 0; i < 20; i++) {
+                for (let i = 0; i < 10; i++) {
                     setTimeout(() => {
                         createWeatherParticle(effect);
-                    }, i * 100);
+                    }, i * 200);
                 }
             }
         }
 
-        function createWeatherParticle(type) {
+        function createWeatherParticle(emoji) {
             const particle = document.createElement('div');
             particle.style.position = 'absolute';
             particle.style.pointerEvents = 'none';
             particle.style.zIndex = '2';
             particle.style.left = Math.random() * 100 + '%';
             particle.style.top = '-10px';
-            
-            switch(type) {
-                case 'rain':
-                    particle.textContent = '💧';
-                    break;
-                case 'snow':
-                    particle.textContent = '❄️';
-                    break;
-                case 'petals':
-                    particle.textContent = '🌸';
-                    break;
-            }
-            
-            particle.style.fontSize = (Math.random() * 10 + 10) + 'px';
+            particle.textContent = emoji;
+            particle.style.fontSize = (Math.random() * 8 + 8) + 'px';
             particle.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
             
             document.querySelector('.room-container').appendChild(particle);
@@ -1508,24 +1339,10 @@
             }, 5000);
         }
 
-        // Add CSS for weather animations
-        const weatherCSS = `
-            @keyframes fall {
-                to {
-                    transform: translateY(calc(100vh + 50px)) rotate(360deg);
-                    opacity: 0;
-                }
-            }
-        `;
-        
-        const style = document.createElement('style');
-        style.textContent = weatherCSS;
-        document.head.appendChild(style);
-
         // Start weather effects
-        setInterval(createWeatherEffect, 30000); // Every 30 seconds
+        setInterval(createWeatherEffect, 30000);
 
-        // Performance optimization: Pause animations when tab is not visible
+        // Performance optimization
         document.addEventListener('visibilitychange', function() {
             const characters = document.querySelectorAll('.character');
             characters.forEach(char => {
@@ -1537,55 +1354,25 @@
             });
         });
 
-        // Add sound effects for interactions
-        function playSound(type) {
-            // Create audio context for sound effects
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            switch(type) {
-                case 'sit':
-                    oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(220, audioContext.currentTime + 0.5);
-                    break;
-                case 'stand':
-                    oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(440, audioContext.currentTime + 0.3);
-                    break;
-                case 'move':
-                    oscillator.frequency.setValueAtTime(330, audioContext.currentTime);
-                    break;
+        // Easter egg - Konami code
+        let konamiCode = [];
+        const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
+        
+        document.addEventListener('keydown', function(e) {
+            konamiCode.push(e.code);
+            if (konamiCode.length > konamiSequence.length) {
+                konamiCode.shift();
             }
             
-            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-            
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.5);
-        }
-
-        // Override functions to add sound effects
-        const originalSitDown = sitDown;
-        sitDown = function() {
-            originalSitDown();
-            playSound('sit');
-        };
-
-        const originalStandUp = standUp;
-        standUp = function() {
-            originalStandUp();
-            playSound('stand');
-        };
-
-        const originalMoveCharacterTo = moveCharacterTo;
-        moveCharacterTo = function(x, y) {
-            originalMoveCharacterTo(x, y);
-            playSound('move');
-        };
+            if (JSON.stringify(konamiCode) === JSON.stringify(konamiSequence)) {
+                showChatBubble(gameState.myCharacter, '🌟 ENLIGHTENMENT ACHIEVED! 🌟');
+                gameState.myCharacter.style.filter = 'drop-shadow(0 0 30px gold) hue-rotate(45deg)';
+                setTimeout(() => {
+                    gameState.myCharacter.style.filter = '';
+                }, 5000);
+                konamiCode = [];
+            }
+        });
     </script>
-   </body>
+</body>
 </html>
