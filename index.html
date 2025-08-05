@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meditation Room V3</title>
+    <title>MGO Meditation Room V3</title>
     <style>
         * {
             margin: 0;
@@ -102,29 +102,13 @@
             background: transparent;
         }
 
-        .character-head {
-            position: absolute;
-            top: 8px;
-            left: 20px;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            z-index: 11;
-        }
-
         .character.standing .character-body {
-            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 96"><defs><radialGradient id="aura" cx="50%" cy="50%" r="60%"><stop offset="0%" style="stop-color:rgba(255,215,0,0);stop-opacity:0" /><stop offset="100%" style="stop-color:rgba(255,215,0,0);stop-opacity:0" /></radialGradient></defs><ellipse cx="32" cy="85" rx="15" ry="8" fill="rgba(0,0,0,0.2)"/><rect x="26" y="32" width="12" height="20" rx="6" fill="%234a90e2"/><rect x="24" y="52" width="16" height="24" rx="8" fill="%232c3e50"/><rect x="18" y="36" width="6" height="16" rx="3" fill="%23fdbcb4"/><rect x="40" y="36" width="6" height="16" rx="3" fill="%23fdbcb4"/><ellipse cx="26" cy="80" rx="4" ry="8" fill="%23fdbcb4"/><ellipse cx="38" cy="80" rx="4" ry="8" fill="%23fdbcb4"/><ellipse cx="26" cy="88" rx="6" ry="4" fill="%23654321"/><ellipse cx="38" cy="88" rx="6" ry="4" fill="%23654321"/></svg>');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
         }
 
         .character.sitting .character-body {
-            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 96"><defs><radialGradient id="aura" cx="50%" cy="50%" r="80%"><stop offset="0%" style="stop-color:rgba(255,215,0,0.3);stop-opacity:0.6" /><stop offset="100%" style="stop-color:rgba(255,215,0,0);stop-opacity:0" /></radialGradient></defs><circle cx="32" cy="48" r="45" fill="url(%23aura)"/><ellipse cx="32" cy="85" rx="20" ry="10" fill="rgba(0,0,0,0.2)"/><rect x="26" y="37" width="12" height="18" rx="6" fill="%234a90e2"/><circle cx="32" cy="65" r="8" fill="%232c3e50"/><ellipse cx="24" cy="72" rx="6" ry="4" fill="%232c3e50"/><ellipse cx="40" cy="72" rx="6" ry="4" fill="%232c3e50"/><ellipse cx="22" cy="76" rx="4" ry="3" fill="%23654321"/><ellipse cx="42" cy="76" rx="4" ry="3" fill="%23654321"/><circle cx="28" cy="40" r="6" fill="%23fdbcb4"/><circle cx="36" cy="40" r="6" fill="%23fdbcb4"/></svg>');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -178,22 +162,27 @@
             z-index: 100;
             display: flex;
             gap: 5px;
-            flex-wrap: wrap;
             justify-content: center;
+            width: 90%;
+            max-width: 400px;
         }
 
         .btn {
             padding: 6px 9px;
             background: rgba(255,255,255,0.9);
             border: none;
-            border-radius: 15px;
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 10px;
+            font-size: 6.5px;
             font-weight: bold;
             transition: all 0.3s ease;
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             backdrop-filter: blur(10px);
-            min-width: 40px;
+            flex: 1;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .btn:hover {
@@ -208,39 +197,31 @@
         }
 
         .music-toggle {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 50px;
-            height: 50px;
+            position: absolute;
+            bottom: 5%;
+            left: 5%;
+            z-index: 101;
             background: rgba(255,255,255,0.9);
             border: none;
             border-radius: 50%;
+            width: 40px;
+            height: 40px;
             cursor: pointer;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             backdrop-filter: blur(10px);
-            z-index: 101;
             transition: all 0.3s ease;
         }
 
         .music-toggle:hover {
+            background: rgba(255,255,255,1);
             transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-        }
-
-        .music-toggle.open {
-            right: 20px;
-            left: auto;
         }
 
         .music-controls {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
+            position: absolute;
+            bottom: 5%;
+            left: 5%;
             z-index: 100;
             background: rgba(255,255,255,0.9);
             padding: 15px;
@@ -249,14 +230,20 @@
             backdrop-filter: blur(10px);
             max-width: 300px;
             display: none;
+            transition: all 0.3s ease;
         }
 
-        .music-controls.show {
-            display: block;
+        .embed-input {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 12px;
         }
 
         .chat-input {
-            position: fixed;
+            position: absolute;
             bottom: 5%;
             left: 50%;
             transform: translateX(-50%);
@@ -267,21 +254,35 @@
             padding: 10px;
             border-radius: 25px;
             backdrop-filter: blur(10px);
+            width: 90%;
+            max-width: 400px;
         }
 
         .chat-input input {
+            flex: 1;
             padding: 8px 15px;
             border: none;
             border-radius: 20px;
-            width: 200px;
-            background: rgba(255,255,255,0.8);
+            background: rgba(255,255,255,0.9);
             font-size: 12px;
             backdrop-filter: blur(10px);
         }
 
-        .chat-input .btn {
-            padding: 8px 12px;
-            font-size: 11px;
+        .chat-input button {
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .chat-input button:hover {
+            background: rgba(255,255,255,1);
+            transform: scale(1.05);
         }
 
         .profile-modal {
@@ -311,93 +312,57 @@
 
         .profile-avatar {
             width: 80px;
-            height: 120px;
+            height: 80px;
             margin: 0 auto 20px;
             border: 3px solid #ddd;
-            border-radius: 10px;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
+            border-radius: 50%;
+            font-size: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            position: relative;
+            transition: transform 0.3s ease;
         }
 
         .profile-avatar:hover {
-            border-color: #4caf50;
+            transform: scale(1.1);
+        }
+
+        .emoji-selector {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+
+        .emoji-option {
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .emoji-option:hover {
+            background: #ddd;
+            transform: scale(1.2);
+        }
+
+        .emoji-option.selected {
+            background: #4caf50;
+            transform: scale(1.1);
         }
 
         .stars {
             color: #ffd700;
             font-size: 20px;
             margin: 10px 0;
-        }
-
-        .emoji-selector {
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 300;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .emoji-grid {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            max-width: 400px;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .emoji-category {
-            margin-bottom: 15px;
-        }
-
-        .emoji-category h4 {
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .emoji-options {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            gap: 5px;
-        }
-
-        .emoji-option {
-            width: 35px;
-            height: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 20px;
-            transition: background 0.3s ease;
-        }
-
-        .emoji-option:hover {
-            background: #f0f0f0;
-            transform: scale(1.1);
-        }
-
-        .achievement-badge {
-            display: inline-block;
-            background: #4caf50;
-            color: white;
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 11px;
-            margin: 3px;
-        }
-
-        .hidden {
-            display: none !important;
         }
 
         .background-selector {
@@ -433,6 +398,16 @@
         .bg-option:hover, .bg-option.selected {
             border-color: #4caf50;
             transform: scale(1.05);
+        }
+
+        .achievement-badge {
+            display: inline-block;
+            background: #4caf50;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            margin: 3px;
         }
 
         .character-status {
@@ -479,15 +454,21 @@
             }
         }
 
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .controls {
-                gap: 3px;
+            .btn {
+                font-size: 5px;
+                padding: 4px 6px;
             }
             
-            .btn {
-                padding: 5px 8px;
-                font-size: 9px;
-                min-width: 35px;
+            .music-toggle {
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
             }
             
             .music-controls {
@@ -496,33 +477,31 @@
             }
             
             .chat-input input {
-                width: 150px;
-                padding: 6px 12px;
                 font-size: 11px;
             }
-
-            .chat-input .btn {
-                padding: 6px 10px;
+            
+            .chat-input button {
                 font-size: 10px;
-            }
-
-            .music-toggle {
-                width: 40px;
-                height: 40px;
-                font-size: 16px;
+                padding: 6px 12px;
             }
         }
 
         @media (orientation: portrait) {
-            .controls {
-                top: 3%;
+            .btn {
+                font-size: 4.5px;
+                padding: 3px 5px;
             }
             
-            .btn {
-                padding: 4px 7px;
-                font-size: 8px;
-                min-width: 30px;
+            .controls {
+                gap: 3px;
             }
+        }
+
+        /* YouTube embed hidden */
+        #ytplayer {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
         }
     </style>
 </head>
@@ -533,35 +512,36 @@
         <div class="controls">
             <button class="btn" id="standBtn" onclick="standUp()">🚶 ĐI</button>
             <button class="btn" id="sitBtn" onclick="sitDown()">🧘 NGỒI THIỀN</button>
-            <button class="btn" onclick="showProfile()">👤 Profile</button>
-            <button class="btn" onclick="showBackgroundSelector()">🎨 Đổi nền</button>
+            <button class="btn" onclick="showProfile()">👤 PROFILE</button>
+            <button class="btn" onclick="showBackgroundSelector()">🎨 ĐỔI NỀN</button>
         </div>
 
-        <button class="music-toggle" id="musicToggle" onclick="toggleMusicPanel()">♪</button>
-
-        <div class="music-controls" id="musicControls">
-            <h4>🎵 Nhạc thiền</h4>
-            <iframe id="ytplayer" type="text/html" width="1" height="0.5625"
-                src="https://www.youtube.com/embed/M7lc1UVf-VE?autoplay=1&controls=0&loop=1"
-                frameborder="0" allowfullscreen style="display: none;"></iframe>
-            <input type="text" id="youtubeEmbed" placeholder="Dán mã embed YouTube" 
-                style="width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px;">
-            <button class="btn" onclick="updateYouTubeEmbed()" style="width: 100%; margin: 5px 0;">🎵 Cập nhật nhạc</button>
+        <button class="music-toggle" onclick="toggleMusicPanel()">♪</button>
+        
+        <div class="music-controls">
+            <h4>🎵 Nhạc thiền YouTube</h4>
+            <input type="text" id="youtubeUrl" placeholder="Dán URL YouTube video" class="embed-input">
+            <button class="btn" onclick="updateYouTubeEmbed()" style="width: 100%; margin: 10px 0;">Cập nhật nhạc</button>
         </div>
 
         <div class="chat-input">
             <input type="text" id="chatMessage" placeholder="Nhập tin nhắn..." maxlength="160" onkeypress="if(event.key==='Enter') sendMessage()">
-            <button class="btn" onclick="sendMessage()">💬 Gửi</button>
+            <button onclick="sendMessage()">💬</button>
         </div>
     </div>
+
+    <!-- Hidden YouTube Player -->
+    <iframe id="ytplayer" type="text/html" width="1" height="1"
+        src="https://www.youtube.com/embed/M7lc1UVf-VE?autoplay=1&controls=0&loop=1&playlist=M7lc1UVf-VE"
+        frameborder="0" allow="autoplay" allowfullscreen>
+    </iframe>
 
     <!-- Profile Modal -->
     <div class="profile-modal" id="profileModal">
         <div class="profile-content">
             <h3>Profile thiền sinh</h3>
-            <div class="profile-avatar" id="profileAvatar" onclick="showEmojiSelector()">
-                <div class="character-head" id="profileHead">😊</div>
-            </div>
+            <div class="profile-avatar" id="profileAvatar" onclick="showEmojiSelector()">🧘</div>
+            <div class="emoji-selector hidden" id="emojiSelector"></div>
             <input type="text" id="userName" placeholder="Tên của bạn" style="width:100%; padding:10px; margin:10px 0; border:1px solid #ddd; border-radius:8px;">
             
             <div class="stars" id="achievementStars">⭐⭐⭐</div>
@@ -581,9 +561,7 @@
     <!-- Character Profile Modal -->
     <div class="profile-modal" id="characterModal">
         <div class="profile-content">
-            <div class="profile-avatar" id="characterAvatar">
-                <div class="character-head" id="characterHead">😊</div>
-            </div>
+            <div class="profile-avatar" id="characterAvatar">🧘</div>
             <h3 id="characterName">Tên nhân vật</h3>
             <div class="stars" id="characterStars">⭐⭐</div>
             <p id="characterBio">Thiền sinh mới bắt đầu hành trình tìm hiểu bản thân.</p>
@@ -614,51 +592,47 @@
         </div>
     </div>
 
-    <!-- Emoji Selector -->
-    <div class="emoji-selector" id="emojiSelector">
-        <div class="emoji-grid">
-            <h3>Chọn avatar emoji</h3>
-            
-            <div class="emoji-category">
-                <h4>👨‍👩‍👧‍👦 Người</h4>
-                <div class="emoji-options" id="peopleEmojis"></div>
-            </div>
-            
-            <div class="emoji-category">
-                <h4>😊 Biểu cảm</h4>
-                <div class="emoji-options" id="emotionEmojis"></div>
-            </div>
-            
-            <div class="emoji-category">
-                <h4>🧘 Thiền định</h4>
-                <div class="emoji-options" id="meditationEmojis"></div>
-            </div>
-            
-            <div style="margin-top: 20px;">
-                <button class="btn" onclick="closeEmojiSelector()">❌ Đóng</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // Emoji collections
-        const emojiCollections = {
-            people: [
-                '👤', '👥', '👨', '👩', '🧑', '👴', '👵', '👶', '👦', '👧',
-                '👨‍🦳', '👩‍🦳', '👨‍🦲', '👩‍🦲', '👨‍🦱', '👩‍🦱', '👨‍🦰', '👩‍🦰',
-                '👱‍♂️', '👱‍♀️', '🧔', '👨‍⚕️', '👩‍⚕️', '👨‍🎓', '👩‍🎓', '👨‍🏫', '👩‍🏫',
-                '👨‍💼', '👩‍💼', '👨‍🔬', '👩‍🔬', '👨‍💻', '👩‍💻', '👨‍🎨', '👩‍🎨'
-            ],
-            emotions: [
-                '😊', '😌', '😍', '🥰', '😘', '😗', '☺️', '😚', '😙', '🤗',
-                '🤔', '🤫', '🤭', '🧐', '😎', '🤓', '😇', '😴', '😪', '🤤',
-                '😋', '😛', '😜', '🤪', '😝', '🤑', '🤗', '🤭', '🤫', '🤔'
-            ],
-            meditation: [
-                '🧘', '🧘‍♂️', '🧘‍♀️', '🕉️', '☯️', '🙏', '🤲', '👐', '🙌', '✨',
-                '🌸', '🌺', '🌻', '🌼', '🌷', '🪷', '🍃', '☘️', '🌿', '🌱'
-            ]
-        };
+        // People & Appearance emojis from Emojipedia
+        const peopleEmojis = [
+            '😀','😃','😄','😁','😆','😅','🤣','😂','🙂','🙃','😉','😊','😇','🥰','😍','🤩','😘','😗','☺️','😚','😙','🥲','😋','😛','😜','🤪','😝','🤑','🤗','🤭','🤫','🤔','🤐','🤨','😐','😑','😶','😏','😒','🙄','😬','🤥','😔','😪','🤤','😴','😷','🤒','🤕','🤢','🤮','🤧','🥵','🥶','🥴','😵','🤯','🤠','🥳','🥸','😎','🤓','🧐','😕','😟','🙁','☹️','😮','😯','😲','😳','🥺','😦','😧','😨','😰','😥','😢','😭','😱','😖','😣','😞','😓','😩','😫','🥱','😤','😡','😠','🤬','😈','👿','💀','☠️',
+            '👶','🧒','👦','👧','🧑','👨','👩','🧓','👴','👵','👱','👱‍♂️','👱‍♀️','🧔','👨‍🦰','👨‍🦱','👨‍🦳','👨‍🦲','👩‍🦰','👩‍🦱','👩‍🦳','👩‍🦲','🙋','🙋‍♂️','🙋‍♀️','🙆','🙆‍♂️','🙆‍♀️','🙅','🙅‍♂️','🙅‍♀️','🤷','🤷‍♂️','🤷‍♀️','🤦','🤦‍♂️','🤦‍♀️','🙇','🙇‍♂️','🙇‍♀️','🧘','🧘‍♂️','🧘‍♀️','🤱','🤰','👸','🤴','👳','👳‍♂️','👳‍♀️','👲','🧕','🤵','🤵‍♂️','🤵‍♀️','👰','👰‍♂️','👰‍♀️','🤯','🥳','🤠','🤡','👻','👽','👾','🤖'
+        ];
+
+        function toggleMusicPanel() {
+            const musicControls = document.querySelector('.music-controls');
+            const toggleBtn = document.querySelector('.music-toggle');
+            
+            if (musicControls.style.display === 'none' || !musicControls.style.display) {
+                musicControls.style.display = 'block';
+                toggleBtn.textContent = '✖';
+            } else {
+                musicControls.style.display = 'none';
+                toggleBtn.textContent = '♪';
+            }
+        }
+
+        function updateYouTubeEmbed() {
+            const urlInput = document.getElementById('youtubeUrl');
+            const url = urlInput.value.trim();
+            
+            if (!url) return;
+            
+            // Extract video ID from YouTube URL
+            let videoId = '';
+            const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+            const match = url.match(regex);
+            
+            if (match) {
+                videoId = match[1];
+                const iframe = document.getElementById('ytplayer');
+                iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&loop=1&playlist=${videoId}`;
+                urlInput.value = '';
+                alert('Đã cập nhật nhạc thành công!');
+            } else {
+                alert('URL YouTube không hợp lệ!');
+            }
+        }
 
         // Game state
         let gameState = {
@@ -670,34 +644,19 @@
             meditationDays: 0,
             joinDate: new Date(),
             currentBackground: 'garden',
-            selectedEmoji: '😊',
-            moveTarget: null,
-            musicPanelOpen: false
+            selectedEmoji: '🧘',
+            moveTarget: null
         };
 
-        // Initialize
-        function init() {
-            loadUserData();
-            setupEmojiSelector();
-            setupBackgroundOptions();
-            createMyCharacter();
-            addOtherCharacters();
-            setupRoomInteraction();
-            updateButtonStates();
-            
-            // Auto-save every 30 seconds
-            setInterval(saveUserData, 30000);
-        }
-
         function loadUserData() {
-            const saved = localStorage.getItem('meditationRoomV3') || '{}';
+            const saved = localStorage.getItem('mgoMeditationRoomV3') || '{}';
             const data = JSON.parse(saved);
             
             gameState.userName = data.userName || 'Thiền sinh mới';
             gameState.joinDate = new Date(data.joinDate || Date.now());
             gameState.meditationDays = data.meditationDays || 0;
             gameState.currentBackground = data.currentBackground || 'garden';
-            gameState.selectedEmoji = data.selectedEmoji || '😊';
+            gameState.selectedEmoji = data.selectedEmoji || '🧘';
             
             // Calculate achievement days
             const daysDiff = Math.floor((Date.now() - gameState.joinDate.getTime()) / (1000 * 60 * 60 * 24));
@@ -714,121 +673,7 @@
                 currentBackground: gameState.currentBackground,
                 selectedEmoji: gameState.selectedEmoji
             };
-            localStorage.setItem('meditationRoomV3', JSON.stringify(data));
-        }
-
-        function setupEmojiSelector() {
-            // Setup people emojis
-            const peopleContainer = document.getElementById('peopleEmojis');
-            emojiCollections.people.forEach(emoji => {
-                const option = document.createElement('div');
-                option.className = 'emoji-option';
-                option.textContent = emoji;
-                option.onclick = () => selectEmoji(emoji);
-                peopleContainer.appendChild(option);
-            });
-
-            // Setup emotion emojis
-            const emotionContainer = document.getElementById('emotionEmojis');
-            emojiCollections.emotions.forEach(emoji => {
-                const option = document.createElement('div');
-                option.className = 'emoji-option';
-                option.textContent = emoji;
-                option.onclick = () => selectEmoji(emoji);
-                emotionContainer.appendChild(option);
-            });
-
-            // Setup meditation emojis
-            const meditationContainer = document.getElementById('meditationEmojis');
-            emojiCollections.meditation.forEach(emoji => {
-                const option = document.createElement('div');
-                option.className = 'emoji-option';
-                option.textContent = emoji;
-                option.onclick = () => selectEmoji(emoji);
-                meditationContainer.appendChild(option);
-            });
-        }
-
-        function selectEmoji(emoji) {
-            gameState.selectedEmoji = emoji;
-            updateCharacterHead();
-            closeEmojiSelector();
-        }
-
-        function showEmojiSelector() {
-            document.getElementById('emojiSelector').style.display = 'flex';
-        }
-
-        function closeEmojiSelector() {
-            document.getElementById('emojiSelector').style.display = 'none';
-        }
-
-        function updateCharacterHead() {
-            if (gameState.myCharacter) {
-                const head = gameState.myCharacter.querySelector('.character-head');
-                if (head) {
-                    head.textContent = gameState.selectedEmoji;
-                }
-            }
-
-            // Update profile avatar
-            const profileHead = document.getElementById('profileHead');
-            if (profileHead) {
-                profileHead.textContent = gameState.selectedEmoji;
-            }
-        }
-
-        function toggleMusicPanel() {
-            const panel = document.getElementById('musicControls');
-            const toggle = document.getElementById('musicToggle');
-            
-            gameState.musicPanelOpen = !gameState.musicPanelOpen;
-            
-            if (gameState.musicPanelOpen) {
-                panel.classList.add('show');
-                toggle.classList.add('open');
-                toggle.textContent = '✖';
-            } else {
-                panel.classList.remove('show');
-                toggle.classList.remove('open');
-                toggle.textContent = '♪';
-            }
-        }
-
-        function updateYouTubeEmbed() {
-            const embedInput = document.getElementById('youtubeEmbed');
-            const iframe = document.getElementById('ytplayer');
-            const embedCode = embedInput.value.trim();
-            
-            if (embedCode) {
-                // Extract YouTube URL from embed code or direct URL
-                let videoUrl = embedCode;
-                
-                // If it's a full embed code, extract the src
-                if (embedCode.includes('<iframe')) {
-                    const srcMatch = embedCode.match(/src="([^"]+)"/);
-                    if (srcMatch) {
-                        videoUrl = srcMatch[1];
-                    }
-                }
-                
-                // If it's a YouTube watch URL, convert to embed
-                if (videoUrl.includes('youtube.com/watch')) {
-                    const videoId = videoUrl.match(/v=([^&]+)/);
-                    if (videoId) {
-                        videoUrl = `https://www.youtube.com/embed/${videoId[1]}?autoplay=1&controls=0&loop=1`;
-                    }
-                } else if (videoUrl.includes('youtu.be/')) {
-                    const videoId = videoUrl.split('youtu.be/')[1].split('?')[0];
-                    videoUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&loop=1`;
-                }
-                
-                iframe.src = videoUrl;
-                embedInput.value = '';
-                
-                // Show success message
-                showChatBubble(gameState.myCharacter, '🎵 Đã cập nhật nhạc!');
-            }
+            localStorage.setItem('mgoMeditationRoomV3', JSON.stringify(data));
         }
 
         function createMyCharacter() {
@@ -840,13 +685,12 @@
             
             const body = document.createElement('div');
             body.className = 'character-body';
+            body.textContent = gameState.selectedEmoji;
+            body.style.fontSize = '48px';
+            body.style.display = 'flex';
+            body.style.alignItems = 'center';
+            body.style.justifyContent = 'center';
             character.appendChild(body);
-            
-            // Add emoji head
-            const head = document.createElement('div');
-            head.className = 'character-head';
-            head.textContent = gameState.selectedEmoji;
-            character.appendChild(head);
             
             // Add status indicator
             const status = document.createElement('div');
@@ -861,12 +705,12 @@
         }
 
         function addOtherCharacters() {
-            // Add some demo characters
+            // Add some demo characters with different emojis
             const demoCharacters = [
-                { x: 20, y: 30, name: 'Minh An', stars: 2, emoji: '👨' },
-                { x: 80, y: 25, name: 'Thu Hà', stars: 4, emoji: '👩' },
-                { x: 15, y: 70, name: 'Đức Anh', stars: 1, emoji: '🧑' },
-                { x: 85, y: 75, name: 'Linh Chi', stars: 3, emoji: '👩‍🦳' }
+                { x: 20, y: 30, name: 'Minh An', emoji: '👨‍🦰', stars: 2 },
+                { x: 80, y: 25, name: 'Thu Hà', emoji: '👩‍🦱', stars: 4 },
+                { x: 15, y: 70, name: 'Đức Anh', emoji: '🧔', stars: 1 },
+                { x: 85, y: 75, name: 'Linh Chi', emoji: '👩‍🦳', stars: 3 }
             ];
             
             demoCharacters.forEach((demo, index) => {
@@ -877,13 +721,12 @@
                 
                 const body = document.createElement('div');
                 body.className = 'character-body';
+                body.textContent = demo.emoji;
+                body.style.fontSize = '48px';
+                body.style.display = 'flex';
+                body.style.alignItems = 'center';
+                body.style.justifyContent = 'center';
                 character.appendChild(body);
-                
-                // Add emoji head
-                const head = document.createElement('div');
-                head.className = 'character-head';
-                head.textContent = demo.emoji;
-                character.appendChild(head);
                 
                 // Add status indicator
                 const status = document.createElement('div');
@@ -933,7 +776,7 @@
             
             // Clamp positions to room boundaries
             x = Math.max(5, Math.min(95, x));
-            y = Math.max(10, Math.min(90, y));
+            y = Math.max(5, Math.min(95, y));
             
             gameState.moveTarget = { x, y };
             gameState.isMoving = true;
@@ -978,8 +821,6 @@
                 // Increment meditation counter
                 gameState.meditationDays++;
                 saveUserData();
-                
-                playSound('sit');
             }
         }
 
@@ -989,8 +830,6 @@
                 gameState.myCharacter.classList.remove('sitting', 'meditating');
                 gameState.myCharacter.classList.add('standing');
                 updateButtonStates();
-                
-                playSound('stand');
             }
         }
 
@@ -999,11 +838,11 @@
             const sitBtn = document.getElementById('sitBtn');
             
             if (gameState.isSitting) {
-                standBtn.classList.remove('active');
-                sitBtn.classList.add('active');
-            } else {
                 standBtn.classList.add('active');
                 sitBtn.classList.remove('active');
+            } else {
+                standBtn.classList.remove('active');
+                sitBtn.classList.add('active');
             }
         }
 
@@ -1030,7 +869,7 @@
             
             // Calculate width based on message length but respect character width
             const charWidth = character.offsetWidth;
-            bubble.style.maxWidth = charWidth + 'px';
+            bubble.style.maxWidth = charWidth + 20 + 'px';
             bubble.style.minWidth = charWidth + 'px';
             
             character.appendChild(bubble);
@@ -1046,6 +885,7 @@
             const modal = document.getElementById('profileModal');
             
             document.getElementById('userName').value = gameState.userName;
+            document.getElementById('profileAvatar').textContent = gameState.selectedEmoji;
             
             // Update achievements
             const weeks = Math.floor(gameState.meditationDays / 7);
@@ -1061,14 +901,12 @@
             
             document.getElementById('achievementText').textContent = achievementText;
             
-            // Update profile avatar head
-            updateCharacterHead();
-            
             modal.style.display = 'flex';
         }
 
         function closeProfile() {
             document.getElementById('profileModal').style.display = 'none';
+            document.getElementById('emojiSelector').classList.add('hidden');
         }
 
         function saveProfile() {
@@ -1080,16 +918,46 @@
                 if (status) {
                     status.textContent = gameState.userName;
                 }
+                
+                // Update character emoji
+                const body = gameState.myCharacter.querySelector('.character-body');
+                if (body) {
+                    body.textContent = gameState.selectedEmoji;
+                }
             }
             
             saveUserData();
             closeProfile();
         }
 
+        function showEmojiSelector() {
+            const selector = document.getElementById('emojiSelector');
+            selector.innerHTML = '';
+            
+            peopleEmojis.forEach(emoji => {
+                const option = document.createElement('div');
+                option.className = 'emoji-option';
+                option.textContent = emoji;
+                if (emoji === gameState.selectedEmoji) {
+                    option.classList.add('selected');
+                }
+                option.onclick = () => {
+                    // Remove previous selection
+                    selector.querySelectorAll('.emoji-option').forEach(o => o.classList.remove('selected'));
+                    option.classList.add('selected');
+                    gameState.selectedEmoji = emoji;
+                    document.getElementById('profileAvatar').textContent = emoji;
+                };
+                selector.appendChild(option);
+            });
+            
+            selector.classList.toggle('hidden');
+        }
+
         function showCharacterProfile(characterData) {
             const modal = document.getElementById('characterModal');
             
-            document.getElementById('characterHead').textContent = characterData.emoji;
+            document.getElementById('characterAvatar').textContent = characterData.emoji;
             document.getElementById('characterName').textContent = characterData.name;
             document.getElementById('characterStars').textContent = '⭐'.repeat(characterData.stars);
             
@@ -1173,38 +1041,63 @@
             closeBackgroundSelector();
         }
 
-        // Add sound effects for interactions
-        function playSound(type) {
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
+        // Initialize
+        function init() {
+            loadUserData();
+            setupBackgroundOptions();
+            createMyCharacter();
+            addOtherCharacters();
+            setupRoomInteraction();
+            updateButtonStates();
+            
+            // Auto-save every 30 seconds
+            setInterval(saveUserData, 30000);
+        }
+
+        // Weather effects
+        function createWeatherEffect() {
+            if (Math.random() > 0.9) {
+                const effects = ['rain', 'snow', 'petals'];
+                const effect = effects[Math.floor(Math.random() * effects.length)];
                 
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                switch(type) {
-                    case 'sit':
-                        oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
-                        oscillator.frequency.exponentialRampToValueAtTime(220, audioContext.currentTime + 0.5);
-                        break;
-                    case 'stand':
-                        oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
-                        oscillator.frequency.exponentialRampToValueAtTime(440, audioContext.currentTime + 0.3);
-                        break;
-                    case 'move':
-                        oscillator.frequency.setValueAtTime(330, audioContext.currentTime);
-                        break;
+                for (let i = 0; i < 20; i++) {
+                    setTimeout(() => {
+                        createWeatherParticle(effect);
+                    }, i * 100);
                 }
-                
-                gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-                
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.5);
-            } catch(e) {
-                // Sound not supported, silently continue
             }
+        }
+
+        function createWeatherParticle(type) {
+            const particle = document.createElement('div');
+            particle.style.position = 'absolute';
+            particle.style.pointerEvents = 'none';
+            particle.style.zIndex = '2';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = '-10px';
+            
+            switch(type) {
+                case 'rain':
+                    particle.textContent = '💧';
+                    break;
+                case 'snow':
+                    particle.textContent = '❄️';
+                    break;
+                case 'petals':
+                    particle.textContent = '🌸';
+                    break;
+            }
+            
+            particle.style.fontSize = (Math.random() * 10 + 10) + 'px';
+            particle.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+            
+            document.querySelector('.room-container').appendChild(particle);
+            
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.remove();
+                }
+            }, 5000);
         }
 
         // Initialize on load
@@ -1221,9 +1114,6 @@
             }
             if (e.key === 'Enter' && document.activeElement.id === 'chatMessage') {
                 sendMessage();
-            }
-            if (e.key === 'm' || e.key === 'M') {
-                toggleMusicPanel();
             }
         });
 
@@ -1289,10 +1179,10 @@
         // Auto-save meditation progress
         setInterval(() => {
             if (gameState.isSitting) {
-                gameState.meditationDays += 0.01;
+                gameState.meditationDays += 0.01; // Small increment for active meditation
                 
                 // Show meditation benefits occasionally
-                if (Math.random() > 0.97) {
+                if (Math.random() > 0.95) {
                     const benefits = [
                         'Tâm trí đang thư giãn... 😌',
                         'Căng thẳng đang tan biến... 🌸',
@@ -1303,46 +1193,12 @@
                     showChatBubble(gameState.myCharacter, benefits[Math.floor(Math.random() * benefits.length)]);
                 }
             }
-        }, 10000);
-
-        // Weather effects
-        function createWeatherEffect() {
-            if (Math.random() > 0.9) {
-                const effects = ['🌸', '❄️', '💧'];
-                const effect = effects[Math.floor(Math.random() * effects.length)];
-                
-                for (let i = 0; i < 10; i++) {
-                    setTimeout(() => {
-                        createWeatherParticle(effect);
-                    }, i * 200);
-                }
-            }
-        }
-
-        function createWeatherParticle(emoji) {
-            const particle = document.createElement('div');
-            particle.style.position = 'absolute';
-            particle.style.pointerEvents = 'none';
-            particle.style.zIndex = '2';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.top = '-10px';
-            particle.textContent = emoji;
-            particle.style.fontSize = (Math.random() * 8 + 8) + 'px';
-            particle.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
-            
-            document.querySelector('.room-container').appendChild(particle);
-            
-            setTimeout(() => {
-                if (particle.parentNode) {
-                    particle.remove();
-                }
-            }, 5000);
-        }
+        }, 10000); // Every 10 seconds during meditation
 
         // Start weather effects
-        setInterval(createWeatherEffect, 30000);
+        setInterval(createWeatherEffect, 30000); // Every 30 seconds
 
-        // Performance optimization
+        // Performance optimization: Pause animations when tab is not visible
         document.addEventListener('visibilitychange', function() {
             const characters = document.querySelectorAll('.character');
             characters.forEach(char => {
@@ -1354,7 +1210,7 @@
             });
         });
 
-        // Easter egg - Konami code
+        // Easter eggs
         let konamiCode = [];
         const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
         
@@ -1365,6 +1221,7 @@
             }
             
             if (JSON.stringify(konamiCode) === JSON.stringify(konamiSequence)) {
+                // Easter egg: Enlightenment mode
                 showChatBubble(gameState.myCharacter, '🌟 ENLIGHTENMENT ACHIEVED! 🌟');
                 gameState.myCharacter.style.filter = 'drop-shadow(0 0 30px gold) hue-rotate(45deg)';
                 setTimeout(() => {
